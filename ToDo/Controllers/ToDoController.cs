@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -18,52 +19,42 @@ namespace ToDo.Controllers
     public class ToDoController : ControllerBase
     {
         private readonly IToDo _iToDo;
-        private readonly ToDoContext _todocontext;
-        private readonly UserManager<ApplicationUser> _usermanager;
-        public ToDoController(IToDo iToDo, ToDoContext toDoContext, UserManager<ApplicationUser> userManager)
+        public ToDoController(IToDo iToDo)
         {
             _iToDo = iToDo;
-            _todocontext = toDoContext;
-            _usermanager = userManager;
         }
         [HttpGet]
         public Data Get(int id)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _iToDo.GetData(id, Guid.Parse(currid));
+            return _iToDo.GetData(id);
         }
 
         [HttpPost]
         public void Post(DataDto datadto)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _iToDo.InsertData(datadto, Guid.Parse(currid));
+            _iToDo.InsertData(datadto);
 
         }
 
         [HttpPut]
         public void Update(DataDto datadto, int id)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _iToDo.UpdateData(datadto, Guid.Parse(currid), id);
+            _iToDo.UpdateData(datadto, id);
         }
         [HttpDelete]
         public void Delete(int id)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _iToDo.DeleteData(id, Guid.Parse(currid));
+            _iToDo.DeleteData(id);
         }
         [HttpPost("List")]
         public List<Data> ListData(List<int> id)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _iToDo.List(id, Guid.Parse(currid));
+            return _iToDo.List(id);
         }
         [HttpPost("Search")]
         public List<Data> SearchData(string name, string desc, bool matchany)
         {
-            var currid = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _iToDo.Search(name, desc, matchany, Guid.Parse(currid));
+            return _iToDo.Search(name, desc, matchany);
         }
     }
 }

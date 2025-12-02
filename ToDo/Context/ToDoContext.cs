@@ -15,7 +15,6 @@ namespace ToDo.Context
         {
             base.OnModelCreating(builder);
 
-            //builder.Entity<ApplicationUser>().HasOne<Data>(d=>d.Data).WithOne(ad=>ad.ApplicationUser).HasForeignKey<Data>(ada=>ada.Userid);
             builder.Entity<Data>().HasOne<ApplicationUser>(a=>a.ApplicationUser).WithMany(b=>b.datas).HasForeignKey(b=>b.Userid);
         }   
     }

@@ -12,55 +12,95 @@ using ToDo.Interfaces;
 using ToDo.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 
 namespace ToDo.Services
 {
     public class CrudService : IToDo
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ToDoContext _todocontext;
-        public CrudService(ToDoContext todocontext)
+
+        public CrudService(ToDoContext todocontext, IHttpContextAccessor httpContextAccessor)
         {
             _todocontext = todocontext;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public Data GetData(int id, Guid guid)
+        public Data GetData(int id)
         {
-            return _todocontext.toDos.Where(x=>x.Userid==guid).FirstOrDefault(x => x.Id == id);
+            if(_httpContextAccessor.HttpContext.User.IsInRole("Admin"))
+            {
+                return _todocontext.toDos.FirstOrDefault(x => x.Id == id);
+            }
+            var c = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return _todocontext.toDos.Where(x=>x.Userid==c).FirstOrDefault(x => x.Id == id);
         }
-        public void InsertData(DataDto datadto, Guid id)
+        public void InsertData(DataDto datadto)
         {
             Data data = datadto.ToEntity();
-            data.Userid = id;
+
+            var c = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            data.Userid = c;
             _todocontext.toDos.Add(data);
             _todocontext.SaveChanges();
         }
-        public void UpdateData(DataDto datadto, Guid guid, int id) // needs fix 
+        public void UpdateData(DataDto datadto, int id) // fix again
         {
             Data data = datadto.ToEntity();
-            if(data.Userid == guid)
+
+            //if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value == "Admin")
+            //{
+            //    _todocontext.toDos.Where(x => x.Id == id).ExecuteUpdate(setters => setters.SetProperty(x => x.Name, datadto.Name)
+            //                                                                        .SetProperty(x => x.Description, datadto.Description));
+            //    _todocontext.SaveChanges();
+            //}
+
+            //var c = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value == "Admin" 
+                | data.Userid == Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
-                //_todocontext.toDos.Where(x=>x.Id==id).ExecuteUpdate(s=>s.SetProperty(n=>n.Name+"*Updated*"));
+                _todocontext.toDos.Where(x=>x.Id==id)
+                                  .ExecuteUpdate(setters=>setters.SetProperty(x=>x.Name, datadto.Name)
+                                                                 .SetProperty(x=>x.Description, datadto.Description));
                 _todocontext.SaveChanges();
             }
         }
-        public void DeleteData(int id, Guid guid)
+        public void DeleteData(int id)
         {
-            var data = GetData(id,guid);
+            var data = GetData(id);
             _todocontext.toDos.Remove(data);
             _todocontext.SaveChanges();
         }
-        public List<Data> List(List<int> ids, Guid guid)
+        public List<Data> List(List<int> ids)
         {
-            return _todocontext.toDos.Where(x=>ids.Contains(x.Id)).Where(x=>x.Userid==guid).ToList();
-        }
+            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value == "Admin")
+            {
+                return _todocontext.toDos.Where(x => ids.Contains(x.Id)).ToList();
 
-        public List<Data> Search(string name, string desc, bool matchany, Guid guid)
+            }
+            var c = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return _todocontext.toDos.Where(x=>ids.Contains(x.Id)).Where(x=>x.Userid==c).ToList();
+        }
+        public List<Data> Search(string name, string desc, bool matchany)
         {
+            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value == "Admin")
+            {
+                if (matchany)
+                {
+                    return _todocontext.toDos.Where(x => name.Equals(x.Name) || desc.Equals(x.Description)).ToList();
+                }
+                return _todocontext.toDos.Where(x => name.Equals(x.Name) && desc.Equals(x.Description)).ToList();
+            }
+
+            var c = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (matchany)
             {
-                return _todocontext.toDos.Where(x => name.Equals(x.Name) || desc.Equals(x.Description)).Where(x=>x.Userid==guid).ToList();
+                return _todocontext.toDos.Where(x => name.Equals(x.Name) || desc.Equals(x.Description)).Where(x=>x.Userid==c).ToList();
             }
-            return _todocontext.toDos.Where(x => name.Equals(x.Name) && desc.Equals(x.Description)).Where(x => x.Userid == guid).ToList();
+            return _todocontext.toDos.Where(x => name.Equals(x.Name) && desc.Equals(x.Description)).Where(x => x.Userid == c).ToList();
         }
     }
 }

@@ -23,9 +23,14 @@ namespace ToDo.Controllers
         }
 
         [HttpPost]
-        public async Task PostRegister(dtoUsers dtoUsers)
+        public async Task<ActionResult> PostRegister(dtoUsers dtoUsers, bool usrOrAdmin)
         {
-              await _ilogin.Postregister(dtoUsers);
+            if (ModelState.IsValid)
+            {
+                await _ilogin.PostRegister(dtoUsers, usrOrAdmin);
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpPost("LogIn")]

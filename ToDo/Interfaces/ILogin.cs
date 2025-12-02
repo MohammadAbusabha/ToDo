@@ -7,8 +7,7 @@ namespace ToDo.Interfaces
 {
     public interface ILogin
     {
-        //public Task<ActionResult<dtoUsers>> PostRegister(CreateUserDto createUserDto);
-        public Task Postregister(dtoUsers dtoUsers);
+        public Task PostRegister(dtoUsers dtoUsers, bool userOrAdmin);
         public Task<bool> LogIn(dtoUsers dtoUsers);
         public Task SignOut();
     }

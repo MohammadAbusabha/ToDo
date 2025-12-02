@@ -9,10 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using ToDo.Models;
 using ToDo.IdentityEntity_s;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IToDo, CrudService>();
 builder.Services.AddScoped<ILogin,  LoginService>();
 
@@ -31,9 +34,10 @@ builder.Services.AddAuthorization(o =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/~/Account/Login";
+    options.LoginPath = "/Account/Login";
 });
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -52,7 +56,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-
 
 app.UseSwagger();
 app.UseSwaggerUI();
