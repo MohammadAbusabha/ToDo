@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Context;
 using ToDo.Dto;
-using ToDo.Enums;
 using ToDo.Extensions;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
@@ -18,48 +17,41 @@ namespace ToDo.Services
 
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-
-        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        private readonly IJWTtoken _jWTtokenService;
+        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTtoken jWTtokenService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _roleManager = roleManager;
+            _jWTtokenService = jWTtokenService;
         }
-        public async Task PostRegister(dtoUsers dtoUsers, bool userOrAdmin)
+        public async Task<string> Register(RegisterDTO dtoUsers)
         {
-            ApplicationRole role = new ApplicationRole();
             ApplicationUser user = new ApplicationUser()
             {
                 UserName = dtoUsers.UserName,
                 Email = dtoUsers.EmailAddress,
             };
-            await _userManager.CreateAsync(user, dtoUsers.Password);
 
-            if (userOrAdmin == true)
+            var resault = await _userManager.CreateAsync(user, dtoUsers.Password);
+
+            if (resault.Succeeded)
             {
-                role.Name = UserType.Admin.ToString();
-                await _roleManager.CreateAsync(role);
+                return "User Created";
             }
-            else
-            {
-                role.Name = UserType.User.ToString();
-                await _roleManager.CreateAsync(role);
-            }
-
-            await _userManager.AddToRoleAsync(user, role.ToString());
-
+            return string.Join(" / ", resault.Errors.Select(e => e.Description));
         }
-        public async Task<bool> LogIn(dtoUsers dtoUsers)
+        public async Task<string> Login(LoginDTO dtoUsers)
         {
-            var result = await _signInManager.PasswordSignInAsync(dtoUsers.UserName, dtoUsers.Password, isPersistent:true, lockoutOnFailure:false);
-            if (result.Succeeded)
+            var u = await _userManager.FindByNameAsync(dtoUsers.Username);
+            var resault = await _userManager.CheckPasswordAsync(u, dtoUsers.Password);
+            if(resault == true)
             {
-                return true;
+                var token =  _jWTtokenService.CreateJWTtoken(u);
+                return token;
             }
-            else return false;
+            return "Username or Password is Incorrect!!";
         }
-        public async Task SignOut()
+        public async Task Signout()
         {
             await _signInManager.SignOutAsync();
         }

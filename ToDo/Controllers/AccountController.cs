@@ -16,36 +16,37 @@ namespace ToDo.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogin _ilogin;
+        private readonly IUserType _type;
 
-        public AccountController(ILogin ilogin)
+        public AccountController(ILogin ilogin, IUserType type)
         {
             _ilogin = ilogin;
+            _type = type;
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostRegister(dtoUsers dtoUsers, bool usrOrAdmin)
+        [HttpPost("CreateAccount")]
+        public async Task<string> Register(RegisterDTO dtoUsers)
         {
-            if (ModelState.IsValid)
-            {
-                await _ilogin.PostRegister(dtoUsers, usrOrAdmin);
-                return Ok();
-            }
-            return BadRequest();
+            return await _ilogin.Register(dtoUsers);
         }
 
-        [HttpPost("LogIn")]
-        public async Task<IActionResult> LogIn(dtoUsers dtoUsers)
+        [HttpPost("Login")]
+        public async Task<string> Login(LoginDTO dtoUsers)
         {
-            if (await _ilogin.LogIn(dtoUsers) == true)
-            {
-                return Ok(dtoUsers.UserName);
-            }
-            else return BadRequest();
+            return await _ilogin.Login(dtoUsers);
         }
-        [HttpGet("SignOut")]
-        public async Task SignOut()
+
+        [HttpPost("Logout")]
+        public async Task Logout()
         {
-            await _ilogin.SignOut();
+            await _ilogin.Signout();
         }
+
+        [HttpPut("Role Selection")]
+        public Task<string> RoleSelect(string s)
+        {
+            return _type.RoleSelect(s);
+        }
+
     }
 }

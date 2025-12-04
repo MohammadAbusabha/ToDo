@@ -13,6 +13,5 @@ namespace ToDo.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
         public Guid Userid { get; set; } 
-        public ApplicationUser ApplicationUser { get; set; }
     }
 }

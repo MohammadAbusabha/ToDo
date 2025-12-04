@@ -23,25 +23,24 @@ namespace ToDo.Controllers
         {
             _iToDo = iToDo;
         }
-        [HttpGet]
+        [HttpGet("Get data")]
         public Data Get(int id)
         {
             return _iToDo.GetData(id);
         }
 
-        [HttpPost]
+        [HttpPost("Insert data")]
         public void Post(DataDto datadto)
         {
             _iToDo.InsertData(datadto);
-
         }
 
-        [HttpPut]
+        [HttpPut("Update data")]
         public void Update(DataDto datadto, int id)
         {
             _iToDo.UpdateData(datadto, id);
         }
-        [HttpDelete]
+        [HttpDelete("Delete data")]
         public void Delete(int id)
         {
             _iToDo.DeleteData(id);
