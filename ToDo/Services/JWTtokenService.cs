@@ -31,7 +31,7 @@ namespace ToDo.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name,  user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName),
             };
 
             var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires:expire, signingCredentials:signCred );
