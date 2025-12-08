@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Threading.Tasks;
 using ToDo.Dto;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
@@ -25,9 +26,9 @@ namespace ToDo.Controllers
         }
 
         [HttpPost("CreateAccount")]
-        public async Task<string> Register(RegisterDTO dtoUsers)
+        public async Task<string> CreateUser(RegisterDTO dtoUsers)
         {
-            return await _ilogin.Register(dtoUsers);
+            return await _ilogin.CreateUser(dtoUsers);
         }
 
         [HttpPost("Login")]
@@ -39,13 +40,13 @@ namespace ToDo.Controllers
         [HttpPost("Logout")]
         public async Task Logout()
         {
-            await _ilogin.Signout();
+            await _ilogin.Logout();
         }
 
         [HttpPut("Role Selection")]
-        public Task<string> RoleSelect(string s)
+        public Task<string> RoleSelect(string roleName)
         {
-            return _type.RoleSelect(s);
+            return _type.RoleSelect(roleName);
         }
 
     }

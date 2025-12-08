@@ -1,15 +1,16 @@
-﻿using ToDo.Dto;
+﻿using System.Collections.Generic;
+using ToDo.Dto;
 using ToDo.Models;
 
 namespace ToDo.Interfaces
 {
-    public interface IToDo
+    public interface ITodo
     {
         public Data GetData(int id);
-        public void InsertData(DataDto datadto);
-        public void UpdateData(DataDto datadto, int id);
+        public void CreateData(DataDTO datadto);
+        public void UpdateData(UpdateDataDTO updateDataDTO);
         public void DeleteData(int id);
-        public List<Data> List(List<int> id);
-        public List<Data> Search(string name, string desc, bool matchany);
+        public List<Data> ListData(List<int> id);
+        public List<Data> SearchData(SearchDTO searchDTO);
     }
 }

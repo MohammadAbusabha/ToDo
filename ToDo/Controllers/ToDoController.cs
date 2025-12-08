@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Collections.Generic;
 using System.Security.Claims;
 using ToDo.Context;
 using ToDo.Dto;
@@ -15,45 +16,46 @@ using ToDo.Services;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles ="Admin")]
     [ApiController]
     public class ToDoController : ControllerBase
     {
-        private readonly IToDo _iToDo;
-        public ToDoController(IToDo iToDo)
+        private readonly ITodo _iTodo;
+        public ToDoController(ITodo iTodo)
         {
-            _iToDo = iToDo;
+            _iTodo = iTodo;
         }
         [HttpGet("Get data")]
-        public Data Get(int id)
+        public Data GetData(int id) 
         {
-            return _iToDo.GetData(id);
+            return _iTodo.GetData(id);
         }
 
         [HttpPost("Insert data")]
-        public void Post(DataDto datadto)
+        public void CreateData(DataDTO datadto)
         {
-            _iToDo.InsertData(datadto);
+            _iTodo.CreateData(datadto);
         }
 
         [HttpPut("Update data")]
-        public void Update(DataDto datadto, int id)
+        public void UpdateData(UpdateDataDTO updateDataDTO)
         {
-            _iToDo.UpdateData(datadto, id);
+            _iTodo.UpdateData(updateDataDTO);
         }
         [HttpDelete("Delete data")]
-        public void Delete(int id)
+        public void DeleteData(int id)
         {
-            _iToDo.DeleteData(id);
+            _iTodo.DeleteData(id);
         }
         [HttpPost("List")]
         public List<Data> ListData(List<int> id)
         {
-            return _iToDo.List(id);
+            return _iTodo.ListData(id);
         }
         [HttpPost("Search")]
-        public List<Data> SearchData(string name, string desc, bool matchany)
+        public List<Data> SearchData(SearchDTO searchDTO)
         {
-            return _iToDo.Search(name, desc, matchany);
+            return _iTodo.SearchData(searchDTO);
         }
     }
 }

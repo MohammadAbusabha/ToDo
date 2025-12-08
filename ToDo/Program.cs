@@ -14,29 +14,28 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IToDo, CrudService>();
+builder.Services.AddScoped<ITodo, CrudService>();
 builder.Services.AddScoped<ILogin,  LoginService>();
 builder.Services.AddTransient<IJWTtoken, JWTtokenService>();
 builder.Services.AddTransient<IUserType, UserTypeService>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<ToDoContext>()
-    .AddDefaultTokenProviders()
     .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ToDoContext, Guid>>()
     .AddRoleStore<RoleStore<ApplicationRole, ToDoContext, Guid>>();
 
 builder.Services.AddDbContext<ToDoContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-});
 
 builder.Services.AddAuthentication(o =>
 {
@@ -57,12 +56,13 @@ builder.Services.AddAuthentication(o =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
         ValidateLifetime = true,
     };
-    o.MapInboundClaims = false;
+    o.MapInboundClaims =false;
 });
 
 builder.Services.AddAuthorization(o =>
 {
-    o.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    o.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    o.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
 
 builder.Services.AddControllers();
@@ -81,7 +81,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
 
 app.UseHttpsRedirection();
 

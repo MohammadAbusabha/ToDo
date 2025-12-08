@@ -5,15 +5,15 @@ namespace ToDo.Extensions
 {
     public static class DataMappingExtension
     {
-        public static DataDto ToDto(this Data data)
+        public static DataDTO ToDto(this Data data)
         {
-            return new DataDto
+            return new DataDTO
             {
                 Name = data.Name,
                 Description = data.Description,
             };
         }
-        public static Data ToEntity(this DataDto datadto)
+        public static Data ToEntity(this DataDTO datadto)
         {
             return new Data
             {

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using ToDo.Context;
 using ToDo.Dto;
 using ToDo.Extensions;
@@ -24,11 +27,11 @@ namespace ToDo.Services
             _userManager = userManager;
             _jWTtokenService = jWTtokenService;
         }
-        public async Task<string> Register(RegisterDTO dtoUsers)
+        public async Task<string> CreateUser(RegisterDTO dtoUsers)
         {
             ApplicationUser user = new ApplicationUser()
             {
-                UserName = dtoUsers.UserName,
+                UserName = dtoUsers.Username,
                 Email = dtoUsers.EmailAddress,
             };
 
@@ -38,20 +41,20 @@ namespace ToDo.Services
             {
                 return "User Created";
             }
-            return string.Join(" / ", resault.Errors.Select(e => e.Description));
+            throw new Exception(string.Join(" / ", resault.Errors.Select(e => e.Description)));
         }
         public async Task<string> Login(LoginDTO dtoUsers)
         {
-            var u = await _userManager.FindByNameAsync(dtoUsers.Username);
-            var resault = await _userManager.CheckPasswordAsync(u, dtoUsers.Password);
-            if(resault == true)
+            var user = await _userManager.FindByNameAsync(dtoUsers.Username);
+            var resault = await _userManager.CheckPasswordAsync(user, dtoUsers.Password);
+            if(resault)
             {
-                var token =  _jWTtokenService.CreateJWTtoken(u);
+                var token =  _jWTtokenService.CreateJWTtoken(user);
                 return token;
             }
-            return "Username or Password is Incorrect!!";
+            throw new Exception("Username or Password is Incorrect!!");
         }
-        public async Task Signout()
+        public async Task Logout()
         {
             await _signInManager.SignOutAsync();
         }

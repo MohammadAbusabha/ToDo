@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,10 +17,12 @@ namespace ToDo.Services
     public class JWTtokenService : IJWTtoken
     {
         private readonly IConfiguration _configuration;
+        private readonly ClaimsPrincipal _user;
 
-        public JWTtokenService(IConfiguration configuration)
+        public JWTtokenService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
+            _user = httpContextAccessor.HttpContext.User;
         }
 
         public string CreateJWTtoken(ApplicationUser user)
@@ -25,6 +31,8 @@ namespace ToDo.Services
             var signCred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expire = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["expiration_minutes"]));
 
+            //var test = user.IdentityRole.Name;
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -32,6 +40,7 @@ namespace ToDo.Services
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
+                //new Claim(ClaimTypes.Role, test),
             };
 
             var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires:expire, signingCredentials:signCred );

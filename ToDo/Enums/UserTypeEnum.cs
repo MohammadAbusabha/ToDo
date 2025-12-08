@@ -2,6 +2,6 @@
 {
     public enum UserTypeEnum
     {
-        Admin,User,Viewer,Guest,Test
+        Admin, User, Viewer, Guest, Test
     }
 }

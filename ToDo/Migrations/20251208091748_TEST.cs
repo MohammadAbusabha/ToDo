@@ -51,17 +51,18 @@ namespace ToDo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "toDos",
+                name: "DataTable",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Userid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_toDos", x => x.Id);
+                    table.PrimaryKey("PK_DataTable", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,7 +230,7 @@ namespace ToDo.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "toDos");
+                name: "DataTable");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

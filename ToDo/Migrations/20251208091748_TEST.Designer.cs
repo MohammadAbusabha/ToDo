@@ -12,8 +12,8 @@ using ToDo.Context;
 namespace ToDo.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    [Migration("20251207094830_TEST9")]
-    partial class TEST9
+    [Migration("20251208091748_TEST")]
+    partial class TEST
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -241,7 +241,7 @@ namespace ToDo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ToDos");
+                    b.ToTable("DataTable");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
