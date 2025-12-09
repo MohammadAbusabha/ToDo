@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
+using Microsoft.VisualBasic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using ToDo.Interfaces;
 
 namespace ToDo.Services
 {
+    [AllowAnonymous]
     public class UserTypeService : IUserType
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
@@ -24,15 +27,11 @@ namespace ToDo.Services
             _userManager = userManager;
             _user = contextAccessor.HttpContext.User;
         }
-        public async Task<string> RoleSelect(string rolename)
+        public async Task<string> CreateRole(string rolename)
         {
             var resault = await _roleManager.RoleExistsAsync(rolename);
 
-            if (resault)// check if user has role 
-            {
-                return await RoleAssign(rolename);
-            } 
-            else if (resault != true) // if role dont exist Create it
+            if (!resault)
             {
                 ApplicationRole role = new ApplicationRole();
 
@@ -41,43 +40,35 @@ namespace ToDo.Services
                     case "Admin":
                         role.Name = UserTypeEnum.Admin.ToString();
                         await _roleManager.CreateAsync(role);
-                        await RoleAssign(rolename);
                         return "Role Created!";
                     case "User":
                         role.Name = UserTypeEnum.User.ToString();
                         await _roleManager.CreateAsync(role);
-                        await RoleAssign(rolename);
                         return "Role Created!";
                     case "Viewer":
                         role.Name = UserTypeEnum.Viewer.ToString();
                         await _roleManager.CreateAsync(role);
-                        await RoleAssign(rolename);
                         return "Role Created!";
                     case "Guest":
                         role.Name = UserTypeEnum.Guest.ToString();
                         await _roleManager.CreateAsync(role);
-                        await RoleAssign(rolename);
                         return "Role Created!";
                     case "Test":
                         role.Name = UserTypeEnum.Test.ToString();
                         await _roleManager.CreateAsync(role);
-                        await RoleAssign(rolename);
                         return "Role Created!";
                 }
             }
-            return "Incorrect role";
+            return "Role Exist"; 
         }
-        public async Task<string> RoleAssign(string s)
+        public async Task<string> RoleAssign(RoleDTO roleDTO)
         {
-            var name = _user.Identity.Name;
-            var user = _userManager.FindByNameAsync(name).Result;
+            await CreateRole(roleDTO.RoleName);
 
-            //if (_userManager.GetRolesAsync(user) != null) // change to handle errors
-            //{
-            //    return "User has a Role";
-            //}
+            var username = _user.Identity.Name;
 
-            await _userManager.AddToRoleAsync(user, s);
+            var user = _userManager.FindByNameAsync(roleDTO.UserName).Result;
+            await _userManager.AddToRoleAsync(user, roleDTO.RoleName);
             return "Role granted";
         }
     }

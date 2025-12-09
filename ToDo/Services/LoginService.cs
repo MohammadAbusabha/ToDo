@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +22,13 @@ namespace ToDo.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJWTtoken _jWTtokenService;
-        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTtoken jWTtokenService)
+        private readonly IUserType _userType;
+        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTtoken jWTtokenService, IUserType userType)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _jWTtokenService = jWTtokenService;
+            _userType = userType;
         }
         public async Task<string> CreateUser(RegisterDTO dtoUsers)
         {
@@ -34,12 +37,21 @@ namespace ToDo.Services
                 UserName = dtoUsers.Username,
                 Email = dtoUsers.EmailAddress,
             };
-
             var resault = await _userManager.CreateAsync(user, dtoUsers.Password);
 
             if (resault.Succeeded)
             {
-                return "User Created";
+                await _signInManager.SignInAsync(user, isPersistent: false, authenticationMethod: null);
+
+                RoleDTO roleDTO = new RoleDTO()
+                {
+                    UserName = dtoUsers.Username,
+                    RoleName = "User"
+                };
+                await _userType.RoleAssign(roleDTO);
+
+                var token = _jWTtokenService.CreateJWTtoken(user);
+                return token;
             }
             throw new Exception(string.Join(" / ", resault.Errors.Select(e => e.Description)));
         }

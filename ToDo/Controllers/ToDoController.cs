@@ -16,7 +16,7 @@ using ToDo.Services;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles ="Admin,User")]
     [ApiController]
     public class ToDoController : ControllerBase
     {

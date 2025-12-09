@@ -6,6 +6,6 @@ namespace ToDo.Interfaces
 {
     public interface IUserType
     {
-        public Task<string> RoleSelect(string s);
+        public Task<string> RoleAssign(RoleDTO roleDTO);
     }
 }

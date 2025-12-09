@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices;
 using ToDo.IdentityEntity_s;
+using ToDo.Interfaces;
 
 namespace ToDo.Models
 {
@@ -13,6 +14,6 @@ namespace ToDo.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public Guid Userid { get; set; } 
+        public Guid Userid { get; set; }
     }
 }

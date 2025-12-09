@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -33,9 +34,9 @@ namespace ToDo.Services
         }
         public Data GetData(int id)
         {
-            return _todocontext.DataTable
-                .Where(x => x.Userid == Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value))
-                .FirstOrDefault(x => x.Id == id);
+            return _todocontext.DataTable.FirstOrDefault(x=>x.Id == id);
+                //.Where(x => x.Userid == Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value))
+                //.FirstOrDefault(x => x.Id == id);
         }
         public void CreateData(DataDTO datadto)
         {

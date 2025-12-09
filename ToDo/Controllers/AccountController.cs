@@ -12,7 +12,6 @@ using ToDo.Models;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [AllowAnonymous]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -25,12 +24,14 @@ namespace ToDo.Controllers
             _type = type;
         }
 
+        [AllowAnonymous]
         [HttpPost("CreateAccount")]
         public async Task<string> CreateUser(RegisterDTO dtoUsers)
         {
             return await _ilogin.CreateUser(dtoUsers);
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<string> Login(LoginDTO dtoUsers)
         {
@@ -43,10 +44,11 @@ namespace ToDo.Controllers
             await _ilogin.Logout();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("Role Selection")]
-        public Task<string> RoleSelect(string roleName)
+        public Task<string> RoleAssign(RoleDTO roleDTO)
         {
-            return _type.RoleSelect(roleName);
+            return _type.RoleAssign(roleDTO);
         }
 
     }
