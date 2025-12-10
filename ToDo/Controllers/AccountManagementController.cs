@@ -12,7 +12,7 @@ using ToDo.Entitys;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(policy:"AdminOnly")]
+    [Authorize]
     [ApiController]
     public class AccountManagementController : ControllerBase
     {

@@ -18,11 +18,5 @@ namespace ToDo.Context
             _contextAccessor = httpContextAccessor;
         }
         public DbSet<Data> DataTable { get; set; }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-            builder.Entity<Data>().HasQueryFilter(x=> _contextAccessor.HttpContext.User.IsInRole("Admin") 
-            | x.Userid == Guid.Parse(_contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value));
-        }
     }
 }

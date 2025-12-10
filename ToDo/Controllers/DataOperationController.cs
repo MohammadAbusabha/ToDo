@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(policy:"AdminOnly")]
+    [Authorize]
     [ApiController]
     public class DataOperationController : ControllerBase
     {

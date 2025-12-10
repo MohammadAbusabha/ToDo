@@ -33,7 +33,7 @@ namespace ToDo.Services
             if (!resault)
             {
                 ApplicationRole role = new ApplicationRole();
-                var enumRoleNames = typeof(RoleEnum).GetEnumNames();
+                var enumRoleNames = typeof(Role).GetEnumNames();
                 foreach (var enumRoleName in enumRoleNames)
                 {
                     if(enumRoleName == rolename)

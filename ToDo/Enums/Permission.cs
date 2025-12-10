@@ -1,6 +1,6 @@
 ﻿namespace ToDo.Enums
 {
-    public enum PermissionEnum
+    public enum Permission
     {
         CanCreate, CanUpdate, CanDelete, CanList, CanSearch, CanGet
     }

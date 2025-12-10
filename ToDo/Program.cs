@@ -26,12 +26,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IDataOperationService, DataOperationsService>();
-builder.Services.AddScoped<IAccountManagementService,  AccountManagementService>();
-builder.Services.AddTransient<IJWTtokenCreationService, JWTtokenCreationService>();
-builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();
-builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
-builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();
+builder.Services.AddScoped<IDataOperationService, DataOperationsService>();//data api
+builder.Services.AddScoped<IAccountManagementService,  AccountManagementService>();//account api
+builder.Services.AddTransient<IJWTtokenCreationService, JWTtokenCreationService>();//jwt
+builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();//roles
+builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();//permissions
+builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();//admin role bypass
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<DataContext>()
@@ -64,8 +64,6 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    o.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
     o.AddPolicy("CanCreate", policy => policy.RequireClaim("Permission", "CanCreate"));
     o.AddPolicy("CanUpdate", policy => policy.RequireClaim("Permission", "CanUpdate"));
     o.AddPolicy("CanGet", policy => policy.RequireClaim("Permission", "CanGet"));

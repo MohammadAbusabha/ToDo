@@ -8,7 +8,7 @@ using ToDo.Resources;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(policy: "AdminOnly")]
+    [Authorize(Roles ="Admin")]
     [ApiController]
     public class PermissionManagementController : ControllerBase
     {

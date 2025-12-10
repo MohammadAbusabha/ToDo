@@ -20,7 +20,7 @@ namespace ToDo.Services
         }
         public async Task<Claim> CheckPermission(string permission)
         {
-            var permissionNames = typeof(PermissionEnum).GetEnumNames();
+            var permissionNames = typeof(Permission).GetEnumNames();
             foreach (var name in permissionNames)
             {
                 if (name == permission)
