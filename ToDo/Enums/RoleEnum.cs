@@ -1,6 +1,6 @@
 ﻿namespace ToDo.Enums
 {
-    public enum UserTypeEnum
+    public enum RoleEnum
     {
         Admin, User, Viewer, Guest, Test
     }

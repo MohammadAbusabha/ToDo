@@ -1,10 +1,10 @@
-﻿namespace ToDo.Dto
+﻿namespace ToDo.Resources
 {
-    public class RoleDTO : UserRoleDTO
+    public class RoleResource : UserRoleResource
     {
         public string RoleName { get; set; }
     }
-    public class UserRoleDTO 
+    public class UserRoleResource 
     {
         public string UserName { get; set; }
     }

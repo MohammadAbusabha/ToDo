@@ -6,7 +6,7 @@ using ToDo.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Models;
+using ToDo.Entitys;
 using ToDo.IdentityEntity_s;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -19,23 +19,26 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using ToDo.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<ITodo, CrudService>();
-builder.Services.AddScoped<ILogin,  LoginService>();
-builder.Services.AddTransient<IJWTtoken, JWTtokenService>();
-builder.Services.AddTransient<IUserType, UserTypeService>();
+builder.Services.AddScoped<IDataOperationService, DataOperationsService>();
+builder.Services.AddScoped<IAccountManagementService,  AccountManagementService>();
+builder.Services.AddTransient<IJWTtokenCreationService, JWTtokenCreationService>();
+builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();
+builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
+builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<ToDoContext>()
-    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ToDoContext, Guid>>()
-    .AddRoleStore<RoleStore<ApplicationRole, ToDoContext, Guid>>();
+    .AddEntityFrameworkStores<DataContext>()
+    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, DataContext, Guid>>()
+    .AddRoleStore<RoleStore<ApplicationRole, DataContext, Guid>>();
 
-builder.Services.AddDbContext<ToDoContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
+builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
 
 builder.Services.AddAuthentication(o =>
 {
@@ -63,6 +66,12 @@ builder.Services.AddAuthorization(o =>
 {
     o.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     o.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+    o.AddPolicy("CanCreate", policy => policy.RequireClaim("Permission", "CanCreate"));
+    o.AddPolicy("CanUpdate", policy => policy.RequireClaim("Permission", "CanUpdate"));
+    o.AddPolicy("CanGet", policy => policy.RequireClaim("Permission", "CanGet"));
+    o.AddPolicy("CanDelete", policy => policy.RequireClaim("Permission", "CanDelete"));
+    o.AddPolicy("CanList", policy => policy.RequireClaim("Permission", "CanList"));
+    o.AddPolicy("CanSearch", policy => policy.RequireClaim("Permission", "CanSearch"));
 });
 
 builder.Services.AddControllers();

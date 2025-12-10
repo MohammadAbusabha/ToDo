@@ -4,21 +4,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-using ToDo.Dto;
+using ToDo.Resources;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Models;
+using ToDo.Entitys;
 
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(policy:"AdminOnly")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountManagementController : ControllerBase
     {
-        private readonly ILogin _ilogin;
-        private readonly IUserType _type;
+        private readonly IAccountManagementService _ilogin;
+        private readonly IRoleManagementService _type;
 
-        public AccountController(ILogin ilogin, IUserType type)
+        public AccountManagementController(IAccountManagementService ilogin, IRoleManagementService type)
         {
             _ilogin = ilogin;
             _type = type;
@@ -26,27 +27,26 @@ namespace ToDo.Controllers
 
         [AllowAnonymous]
         [HttpPost("CreateAccount")]
-        public async Task<string> CreateUser(RegisterDTO dtoUsers)
+        public async Task<string> CreateUser(RegisterResource dtoUsers)
         {
             return await _ilogin.CreateUser(dtoUsers);
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<string> Login(LoginDTO dtoUsers)
+        public async Task<string> Login(LoginResource dtoUsers)
         {
             return await _ilogin.Login(dtoUsers);
         }
-
+        [AllowAnonymous]
         [HttpPost("Logout")]
         public async Task Logout()
         {
             await _ilogin.Logout();
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPut("Role Selection")]
-        public Task<string> RoleAssign(RoleDTO roleDTO)
+        public Task<string> RoleAssign(RoleResource roleDTO)
         {
             return _type.RoleAssign(roleDTO);
         }

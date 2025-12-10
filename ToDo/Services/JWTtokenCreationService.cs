@@ -9,19 +9,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using ToDo.Dto;
+using ToDo.Resources;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
 using static System.Net.WebRequestMethods;
 
 namespace ToDo.Services
 {
-    public class JWTtokenService : IJWTtoken
+    public class JWTtokenCreationService : IJWTtokenCreationService
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public JWTtokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
+        public JWTtokenCreationService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _configuration = configuration;
             _userManager = userManager;
@@ -46,6 +46,8 @@ namespace ToDo.Services
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
+            var permissionClaim = _userManager.GetClaimsAsync(user).Result;
+            claims.AddRange(permissionClaim);
 
             var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires:expire, signingCredentials:signCred );
 

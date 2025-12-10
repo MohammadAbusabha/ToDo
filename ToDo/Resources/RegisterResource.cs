@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ToDo.Dto
+namespace ToDo.Resources
 {
-    public class RegisterDTO : LoginDTO
+    public class RegisterResource : LoginResource
     {
         [EmailAddress]
         [Required]
         public string EmailAddress { get; set; }
     }
-    public class LoginDTO
+    public class LoginResource
     {
         [Required]
         public string Username { get; set; }

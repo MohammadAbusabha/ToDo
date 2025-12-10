@@ -11,7 +11,7 @@ using ToDo.Context;
 
 namespace ToDo.Migrations
 {
-    [DbContext(typeof(ToDoContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20251209104648_TEST4")]
     partial class TEST4
     {

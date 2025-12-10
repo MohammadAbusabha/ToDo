@@ -1,19 +1,19 @@
-﻿using ToDo.Dto;
-using ToDo.Models;
+﻿using ToDo.Resources;
+using ToDo.Entitys;
 
 namespace ToDo.Extensions
 {
     public static class DataMappingExtension
     {
-        public static DataDTO ToDto(this Data data)
+        public static DataResource ToDto(this Data data)
         {
-            return new DataDTO
+            return new DataResource
             {
                 Name = data.Name,
                 Description = data.Description,
             };
         }
-        public static Data ToEntity(this DataDTO datadto)
+        public static Data ToEntity(this DataResource datadto)
         {
             return new Data
             {

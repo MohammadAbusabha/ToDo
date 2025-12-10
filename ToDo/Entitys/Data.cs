@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
 
-namespace ToDo.Models
+namespace ToDo.Entitys
 {
     public class Data
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using ToDo.Interfaces;
-using ToDo.Models;
+using ToDo.Entitys;
 
 namespace ToDo.IdentityEntity_s
 {

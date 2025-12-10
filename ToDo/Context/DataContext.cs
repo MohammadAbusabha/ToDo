@@ -6,19 +6,18 @@ using System;
 using System.Security.Claims;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Models;
+using ToDo.Entitys;
 
 namespace ToDo.Context
 {
-    public class ToDoContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    public class DataContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        public ToDoContext(DbContextOptions<ToDoContext>op, IHttpContextAccessor httpContextAccessor) : base(op)  
+        public DataContext(DbContextOptions<DataContext>op, IHttpContextAccessor httpContextAccessor) : base(op)  
         {
             _contextAccessor = httpContextAccessor;
         }
         public DbSet<Data> DataTable { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

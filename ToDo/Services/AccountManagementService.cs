@@ -8,29 +8,31 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ToDo.Context;
-using ToDo.Dto;
+using ToDo.Resources;
 using ToDo.Extensions;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Models;
+using ToDo.Entitys;
 
 namespace ToDo.Services
 {
-    public class LoginService : ILogin
+    public class AccountManagementService : IAccountManagementService
     {
 
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IJWTtoken _jWTtokenService;
-        private readonly IUserType _userType;
-        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTtoken jWTtokenService, IUserType userType)
+        private readonly IJWTtokenCreationService _jWTtokenService;
+        private readonly IRoleManagementService _userType;
+        public AccountManagementService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTtokenCreationService jWTtokenService, IRoleManagementService userType)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _jWTtokenService = jWTtokenService;
             _userType = userType;
         }
-        public async Task<string> CreateUser(RegisterDTO dtoUsers)
+
+        // USER CREATION //
+        public async Task<string> CreateUser(RegisterResource dtoUsers)
         {
             ApplicationUser user = new ApplicationUser()
             {
@@ -43,7 +45,7 @@ namespace ToDo.Services
             {
                 await _signInManager.SignInAsync(user, isPersistent: false, authenticationMethod: null);
 
-                RoleDTO roleDTO = new RoleDTO()
+                RoleResource roleDTO = new RoleResource()
                 {
                     UserName = dtoUsers.Username,
                     RoleName = "User"
@@ -55,7 +57,10 @@ namespace ToDo.Services
             }
             throw new Exception(string.Join(" / ", resault.Errors.Select(e => e.Description)));
         }
-        public async Task<string> Login(LoginDTO dtoUsers)
+
+        // USER LOGIN //
+
+        public async Task<string> Login(LoginResource dtoUsers)
         {
             var user = await _userManager.FindByNameAsync(dtoUsers.Username);
             var resault = await _userManager.CheckPasswordAsync(user, dtoUsers.Password);
@@ -66,6 +71,9 @@ namespace ToDo.Services
             }
             throw new Exception("Username or Password is Incorrect!!");
         }
+
+        // USER LOGOUT // 
+
         public async Task Logout()
         {
             await _signInManager.SignOutAsync();

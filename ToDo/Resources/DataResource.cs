@@ -1,19 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ToDo.Dto
+namespace ToDo.Resources
 {
-    public class DataDTO
+    public class DataResource
     {
         public string? Name {  get; set; }
         public string? Description { get; set; }
     }
 
-   public class SearchDTO : DataDTO
+   public class SearchResource : DataResource
     {
         public bool MatchAny {  get; set; }
     }
 
-    public class UpdateDataDTO : DataDTO
+    public class UpdateDataResource : DataResource
     {
         public int Id { get; set; }
     }
