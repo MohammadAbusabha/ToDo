@@ -1,18 +1,11 @@
-﻿using AutoMapper;
-using Azure.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ToDo.Context;
-using ToDo.Resources;
-using ToDo.Extensions;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Entitys;
+using ToDo.Resources;
 
 namespace ToDo.Services
 {
@@ -64,9 +57,9 @@ namespace ToDo.Services
         {
             var user = await _userManager.FindByNameAsync(dtoUsers.Username);
             var resault = await _userManager.CheckPasswordAsync(user, dtoUsers.Password);
-            if(resault)
+            if (resault)
             {
-                var token =  _jWTtokenService.CreateJWTtoken(user);
+                var token = _jWTtokenService.CreateJWTtoken(user);
                 return token;
             }
             throw new Exception("Username or Password is Incorrect!!");

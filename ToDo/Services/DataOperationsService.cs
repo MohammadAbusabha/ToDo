@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -6,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using ToDo.Context;
-using ToDo.Resources;
-using ToDo.Extensions;
-using ToDo.Interfaces;
-using ToDo.Entitys;
 using System.Threading.Tasks;
+using ToDo.Context;
+using ToDo.Entitys;
+using ToDo.Interfaces;
+using ToDo.Resources;
 
 
 namespace ToDo.Services
@@ -20,27 +21,33 @@ namespace ToDo.Services
     {
         private readonly DataContext _todocontext;
         private readonly ClaimsPrincipal _user;
-        public DataOperationsService(DataContext todocontext, IHttpContextAccessor httpContextAccessor)
+        private readonly Mapping _mapping;
+        public DataOperationsService(DataContext todocontext, IHttpContextAccessor httpContextAccessor, Mapping mapping)
         {
             _todocontext = todocontext;
             _user = httpContextAccessor.HttpContext.User;
+            _mapping = mapping;
         }
         public async Task<Data> GetData(int id)
         {
-            return await _todocontext.DataTable.FirstOrDefaultAsync(x=>x.Id == id);
+            return await _todocontext.DataTable.FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task CreateData(DataResource datadto)
         {
-            Data data = datadto.ToEntity();
-            var c = Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value);
 
+            //apply mapping here
+
+            var c = Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value);
             data.Userid = c;
+
             await _todocontext.DataTable.AddAsync(data);
             await _todocontext.SaveChangesAsync();
         }
         public async Task UpdateData(UpdateDataResource updateDataDTO)
         {
-            Data data = updateDataDTO.ToEntity();
+
+            //apply mapping here
+
             _todocontext.DataTable.Update(data);
             await _todocontext.SaveChangesAsync();
         }

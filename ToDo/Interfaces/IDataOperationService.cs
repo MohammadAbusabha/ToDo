@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ToDo.Resources;
-using ToDo.Entitys;
 using System.Threading.Tasks;
+using ToDo.Entitys;
+using ToDo.Resources;
 
 namespace ToDo.Interfaces
 {

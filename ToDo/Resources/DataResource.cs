@@ -1,16 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Mapster;
+using ToDo.Entitys;
 
 namespace ToDo.Resources
 {
-    public class DataResource
+    public class DataResource : IMapFrom<Data>
     {
-        public string? Name {  get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
     }
 
-   public class SearchResource : DataResource
+    public class SearchResource : DataResource
     {
-        public bool MatchAny {  get; set; }
+        public bool MatchAny { get; set; }
     }
 
     public class UpdateDataResource : DataResource

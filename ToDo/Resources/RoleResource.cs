@@ -4,7 +4,7 @@
     {
         public string RoleName { get; set; }
     }
-    public class UserRoleResource 
+    public class UserRoleResource
     {
         public string UserName { get; set; }
     }

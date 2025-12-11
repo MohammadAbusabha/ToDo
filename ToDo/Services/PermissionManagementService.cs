@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ToDo.Context;
 using ToDo.Enums;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;

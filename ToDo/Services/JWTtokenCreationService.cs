@@ -1,18 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using ToDo.Resources;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using static System.Net.WebRequestMethods;
 
 namespace ToDo.Services
 {
@@ -32,7 +27,7 @@ namespace ToDo.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
             var signCred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expire = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["expiration_minutes"]));
-            
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -49,7 +44,7 @@ namespace ToDo.Services
             var permissionClaim = _userManager.GetClaimsAsync(user).Result;
             claims.AddRange(permissionClaim);
 
-            var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires:expire, signingCredentials:signCred );
+            var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires: expire, signingCredentials: signCred);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

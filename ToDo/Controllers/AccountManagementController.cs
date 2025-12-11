@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-using ToDo.Resources;
-using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Entitys;
+using ToDo.Resources;
 
 namespace ToDo.Controllers
 {

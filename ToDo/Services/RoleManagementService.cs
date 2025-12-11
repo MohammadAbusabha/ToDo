@@ -1,17 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi;
-using Microsoft.VisualBasic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using System;
 using System.Threading.Tasks;
-using ToDo.Context;
-using ToDo.Resources;
 using ToDo.Enums;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using System;
+using ToDo.Resources;
 
 namespace ToDo.Services
 {
@@ -36,7 +30,7 @@ namespace ToDo.Services
                 var enumRoleNames = typeof(Role).GetEnumNames();
                 foreach (var enumRoleName in enumRoleNames)
                 {
-                    if(enumRoleName == rolename)
+                    if (enumRoleName == rolename)
                     {
                         role.Name = enumRoleName;
                         await _roleManager.CreateAsync(role);

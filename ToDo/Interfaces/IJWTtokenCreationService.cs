@@ -1,5 +1,4 @@
-﻿using ToDo.Resources;
-using ToDo.IdentityEntity_s;
+﻿using ToDo.IdentityEntity_s;
 
 namespace ToDo.Interfaces
 {

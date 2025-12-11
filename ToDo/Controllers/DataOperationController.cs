@@ -1,18 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using System.Collections.Generic;
-using System.Security.Claims;
-using ToDo.Context;
-using ToDo.Resources;
-using ToDo.IdentityEntity_s;
-using ToDo.Interfaces;
-using ToDo.Entitys;
-using ToDo.Services;
 using System.Threading.Tasks;
+using ToDo.Entitys;
+using ToDo.Interfaces;
+using ToDo.Resources;
 
 namespace ToDo.Controllers
 {
@@ -30,13 +22,13 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "CanGet")]
         [HttpGet("Get data")]
-        public async Task<Data> GetData(int id) 
+        public async Task<Data> GetData(int id)
         {
             return await _iTodo.GetData(id);
         }
 
 
-        [Authorize(policy:"CanCreate")]
+        [Authorize(policy: "CanCreate")]
         [HttpPost("Create data")]
         public async Task CreateData(DataResource datadto)
         {

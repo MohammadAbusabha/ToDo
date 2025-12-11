@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ToDo.Interfaces;
@@ -8,7 +7,7 @@ using ToDo.Resources;
 namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class PermissionManagementController : ControllerBase
     {
@@ -21,7 +20,7 @@ namespace ToDo.Controllers
         [HttpPost]
         public async Task AddPermissions(PermissionResource permissionResource)
         {
-           await _permissionManagementService.Addpermission(permissionResource);
+            await _permissionManagementService.Addpermission(permissionResource);
         }
     }
 }

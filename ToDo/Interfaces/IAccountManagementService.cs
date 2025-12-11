@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ToDo.Resources;
-using ToDo.IdentityEntity_s;
-using ToDo.Entitys;
 
 namespace ToDo.Interfaces
 {
