@@ -21,21 +21,24 @@ namespace ToDo.Services
     {
         private readonly DataContext _todocontext;
         private readonly ClaimsPrincipal _user;
-        private readonly Mapping _mapping;
-        public DataOperationsService(DataContext todocontext, IHttpContextAccessor httpContextAccessor, Mapping mapping)
+        public DataOperationsService(DataContext todocontext,IHttpContextAccessor httpContextAccessor)
         {
             _todocontext = todocontext;
             _user = httpContextAccessor.HttpContext.User;
-            _mapping = mapping;
         }
-        public async Task<Data> GetData(int id)
+
+        // GET //
+        public async Task<DataResource> GetData(int id) 
         {
-            return await _todocontext.DataTable.FirstOrDefaultAsync(x => x.Id == id);
+            var data =  await _todocontext.DataTable.FirstOrDefaultAsync(x => x.Id == id);
+            return data.Adapt<DataResource>();
         }
-        public async Task CreateData(DataResource datadto)
+
+        // CREATE //
+        public async Task CreateData(DataResource dataresourcedto) 
         {
 
-            //apply mapping here
+            var data = dataresourcedto.Adapt<Data>();
 
             var c = Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value);
             data.Userid = c;
@@ -43,31 +46,39 @@ namespace ToDo.Services
             await _todocontext.DataTable.AddAsync(data);
             await _todocontext.SaveChangesAsync();
         }
-        public async Task UpdateData(UpdateDataResource updateDataDTO)
-        {
 
-            //apply mapping here
+        // UPDATE // 
+        public async Task UpdateData(UpdateDataResource updateDataResource) 
+        {
+            var data = updateDataResource.Adapt<Data>();
 
             _todocontext.DataTable.Update(data);
             await _todocontext.SaveChangesAsync();
         }
-        public async Task DeleteData(int id)
+        public async Task DeleteData(int id) 
         {
-            var data = GetData(id).Result;
+            var data = await _todocontext.DataTable.FindAsync(id);
             _todocontext.DataTable.Remove(data);
             await _todocontext.SaveChangesAsync();
         }
-        public async Task<List<Data>> ListData(List<int> ids)
+
+        // LIST //
+        public async Task<List<DataResource>> ListData(List<int> ids) 
         {
-            return await _todocontext.DataTable.Where(x => ids.Contains(x.Id)).ToListAsync();
+            var data =  await _todocontext.DataTable.Where(x => ids.Contains(x.Id)).ToListAsync();
+            return data.Adapt<List<DataResource>>();
         }
-        public async Task<List<Data>> SearchData(SearchResource searchDTO)
+
+        // SEARCH //
+        public async Task<List<DataResource>> SearchData(MatchanyResource searchDTO) 
         {
             if (searchDTO.MatchAny)
             {
-                return await _todocontext.DataTable.Where(x => searchDTO.Name.Equals(x.Name) || searchDTO.Description.Equals(x.Description)).ToListAsync();
+                var dataT = await _todocontext.DataTable.Where(x => searchDTO.Name.Equals(x.Name) || searchDTO.Description.Equals(x.Description)).ToListAsync();
+                return dataT.Adapt<List<DataResource>>();
             }
-            return await _todocontext.DataTable.Where(x => searchDTO.Name.Equals(x.Name) && searchDTO.Description.Equals(x.Description)).ToListAsync();
+            var dataF = await _todocontext.DataTable.Where(x => searchDTO.Name.Equals(x.Name) && searchDTO.Description.Equals(x.Description)).ToListAsync();
+            return dataF.Adapt<List<DataResource>>();
         }
     }
 }

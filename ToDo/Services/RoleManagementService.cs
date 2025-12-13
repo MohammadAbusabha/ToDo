@@ -34,9 +34,10 @@ namespace ToDo.Services
                     {
                         role.Name = enumRoleName;
                         await _roleManager.CreateAsync(role);
+                        return;
                     }
-                    throw new Exception("Incorrect Role");
                 }
+                throw new Exception("Incorrect Role");
             }
         }
         public async Task<string> RoleAssign(RoleResource roleDTO)

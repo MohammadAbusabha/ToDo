@@ -7,11 +7,11 @@ namespace ToDo.Interfaces
 {
     public interface IDataOperationService
     {
-        public Task<Data> GetData(int id);
+        public Task<DataResource> GetData(int id);
         public Task CreateData(DataResource datadto);
-        public Task UpdateData(UpdateDataResource updateDataDTO);
+        public Task UpdateData(UpdateDataResource updateDataResource);
         public Task DeleteData(int id);
-        public Task<List<Data>> ListData(List<int> id);
-        public Task<List<Data>> SearchData(SearchResource searchDTO);
+        public Task<List<DataResource>> ListData(List<int> id);
+        public Task<List<DataResource>> SearchData(MatchanyResource searchDTO);
     }
 }

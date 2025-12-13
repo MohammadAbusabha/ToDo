@@ -22,7 +22,7 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "CanGet")]
         [HttpGet("Get data")]
-        public async Task<Data> GetData(int id)
+        public async Task<DataResource> GetData(int id)
         {
             return await _iTodo.GetData(id);
         }
@@ -38,9 +38,9 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "CanUpdate")]
         [HttpPut("Update data")]
-        public async Task UpdateData(UpdateDataResource updateDataDTO)
+        public async Task UpdateData(UpdateDataResource updateDataResource)
         {
-            await _iTodo.UpdateData(updateDataDTO);
+            await _iTodo.UpdateData(updateDataResource);
         }
 
 
@@ -54,7 +54,7 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "CanList")]
         [HttpPost("List Data")]
-        public async Task<List<Data>> ListData(List<int> id)
+        public async Task<List<DataResource>> ListData(List<int> id)
         {
             return await _iTodo.ListData(id);
         }
@@ -62,7 +62,7 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "CanSearch")]
         [HttpPost("Search Data")]
-        public async Task<List<Data>> SearchData(SearchResource searchDTO)
+        public async Task<List<DataResource>> SearchData(MatchanyResource searchDTO)
         {
             return await _iTodo.SearchData(searchDTO);
         }

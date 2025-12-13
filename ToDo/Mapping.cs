@@ -16,13 +16,11 @@ namespace ToDo
         }
         public static void ApplyResourceToModelMapping()
         {
-            var config = new TypeAdapterConfig();
-            config.ForType<DataResource, Data>().Map(dest => dest.Description, src => src.Description).Map(dest => dest.Name, src => src.Name);
+            TypeAdapterConfig.GlobalSettings.ForType<DataResource, Data>().Map(dest => dest.Description, src => src.Description).Map(dest => dest.Name, src => src.Name);
         }
         public static void ApplyModelToResourceMapping()
         {
-            var config = new TypeAdapterConfig();
-            config.ForType<Data, DataResource>().Map(dest=>dest.Description,src=>src.Description).Map(dest=>dest.Name,src=>src.Name);
+            TypeAdapterConfig.GlobalSettings.ForType<Data, DataResource>().Map(dest => dest.Description, src => src.Description).Map(dest => dest.Name, src => src.Name);
         }
     }
 }

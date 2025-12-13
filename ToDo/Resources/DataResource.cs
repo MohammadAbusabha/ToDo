@@ -3,13 +3,13 @@ using ToDo.Entitys;
 
 namespace ToDo.Resources
 {
-    public class DataResource : IMapFrom<Data>
+    public class DataResource
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
     }
 
-    public class SearchResource : DataResource
+    public class MatchanyResource : DataResource
     {
         public bool MatchAny { get; set; }
     }
