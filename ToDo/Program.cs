@@ -1,4 +1,3 @@
-using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -10,15 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Reflection;
 using System.Text;
 using ToDo;
 using ToDo.Context;
-using ToDo.Entitys;
 using ToDo.Handlers;
 using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
-using ToDo.Resources;
 using ToDo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,12 +61,9 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("CanCreate", policy => policy.RequireClaim("Permission", "CanCreate"));
-    o.AddPolicy("CanUpdate", policy => policy.RequireClaim("Permission", "CanUpdate"));
-    o.AddPolicy("CanGet", policy => policy.RequireClaim("Permission", "CanGet"));
-    o.AddPolicy("CanDelete", policy => policy.RequireClaim("Permission", "CanDelete"));
-    o.AddPolicy("CanList", policy => policy.RequireClaim("Permission", "CanList"));
-    o.AddPolicy("CanSearch", policy => policy.RequireClaim("Permission", "CanSearch"));
+    o.AddPolicy("Delete", policy => policy.RequireClaim("Permission", "Delete"));
+    o.AddPolicy("Write", policy => policy.RequireClaim("Permission", "Delet", "Write"));
+    o.AddPolicy("Read", policy => policy.RequireClaim("Permission", "Delet", "Write", "Read"));
 });
 
 

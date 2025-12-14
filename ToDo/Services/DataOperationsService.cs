@@ -20,11 +20,9 @@ namespace ToDo.Services
     public class DataOperationsService : IDataOperationService
     {
         private readonly DataContext _todocontext;
-        private readonly ClaimsPrincipal _user;
-        public DataOperationsService(DataContext todocontext,IHttpContextAccessor httpContextAccessor)
+        public DataOperationsService(DataContext todocontext)
         {
             _todocontext = todocontext;
-            _user = httpContextAccessor.HttpContext.User;
         }
 
         // GET //
@@ -39,10 +37,6 @@ namespace ToDo.Services
         {
 
             var data = dataresourcedto.Adapt<Data>();
-
-            var c = Guid.Parse(_user.FindFirst(ClaimTypes.NameIdentifier).Value);
-            data.Userid = c;
-
             await _todocontext.DataTable.AddAsync(data);
             await _todocontext.SaveChangesAsync();
         }
@@ -51,7 +45,6 @@ namespace ToDo.Services
         public async Task UpdateData(UpdateDataResource updateDataResource) 
         {
             var data = updateDataResource.Adapt<Data>();
-
             _todocontext.DataTable.Update(data);
             await _todocontext.SaveChangesAsync();
         }

@@ -41,7 +41,7 @@ namespace ToDo.Services
                 RoleResource roleDTO = new RoleResource()
                 {
                     UserName = dtoUsers.Username,
-                    RoleName = "User"
+                    RoleName = "Viewer"
                 };
                 await _userType.RoleAssign(roleDTO);
 

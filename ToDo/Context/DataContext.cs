@@ -9,11 +9,15 @@ namespace ToDo.Context
 {
     public class DataContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
-        private readonly IHttpContextAccessor _contextAccessor;
-        public DataContext(DbContextOptions<DataContext> op, IHttpContextAccessor httpContextAccessor) : base(op)
+        public DataContext(DbContextOptions<DataContext> op) : base(op)
         {
-            _contextAccessor = httpContextAccessor;
         }
         public DbSet<Data> DataTable { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<ApplicationUser>().HasMany(a=>a.Data).WithOne(a=>a.User).HasForeignKey(a=>a.Userid);
+        }
     }
 }

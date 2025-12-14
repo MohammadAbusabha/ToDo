@@ -2,6 +2,6 @@
 {
     public enum Permission
     {
-        CanCreate, CanUpdate, CanDelete, CanList, CanSearch, CanGet
+        Read = 1 ,Write = 2 ,Delete = 3 , Owner = 4, TEST
     }
 }

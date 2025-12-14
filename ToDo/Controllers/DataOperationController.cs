@@ -13,58 +13,58 @@ namespace ToDo.Controllers
     [ApiController]
     public class DataOperationController : ControllerBase
     {
-        private readonly IDataOperationService _iTodo;
+        private readonly IDataOperationService _IdataOperationService;
         public DataOperationController(IDataOperationService iTodo)
         {
-            _iTodo = iTodo;
+            _IdataOperationService = iTodo;
         }
 
 
-        [Authorize(policy: "CanGet")]
+        [Authorize(policy: "Read")]
         [HttpGet("Get data")]
         public async Task<DataResource> GetData(int id)
         {
-            return await _iTodo.GetData(id);
+            return await _IdataOperationService.GetData(id);
         }
 
 
-        [Authorize(policy: "CanCreate")]
+        [Authorize(policy: "Write")]
         [HttpPost("Create data")]
         public async Task CreateData(DataResource datadto)
         {
-            await _iTodo.CreateData(datadto);
+            await _IdataOperationService.CreateData(datadto);
         }
 
 
-        [Authorize(policy: "CanUpdate")]
+        [Authorize(policy: "Write")]
         [HttpPut("Update data")]
         public async Task UpdateData(UpdateDataResource updateDataResource)
         {
-            await _iTodo.UpdateData(updateDataResource);
+            await _IdataOperationService.UpdateData(updateDataResource);
         }
 
 
-        [Authorize(policy: "CanDelete")]
+        [Authorize(policy: "Delete")]
         [HttpDelete("Delete data")]
         public async Task DeleteData(int id)
         {
-            await _iTodo.DeleteData(id);
+            await _IdataOperationService.DeleteData(id);
         }
 
 
-        [Authorize(policy: "CanList")]
+        [Authorize(policy: "Read")]
         [HttpPost("List Data")]
         public async Task<List<DataResource>> ListData(List<int> id)
         {
-            return await _iTodo.ListData(id);
+            return await _IdataOperationService.ListData(id);
         }
 
 
-        [Authorize(policy: "CanSearch")]
+        [Authorize(policy: "Read")]
         [HttpPost("Search Data")]
         public async Task<List<DataResource>> SearchData(MatchanyResource searchDTO)
         {
-            return await _iTodo.SearchData(searchDTO);
+            return await _IdataOperationService.SearchData(searchDTO);
         }
     }
 }

@@ -12,8 +12,8 @@ using ToDo.Context;
 namespace ToDo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251213051329_TEST8")]
-    partial class TEST8
+    [Migration("20251214090521_TEST")]
+    partial class TEST
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,6 +146,8 @@ namespace ToDo.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Userid");
 
                     b.ToTable("DataTable");
                 });
@@ -293,6 +295,22 @@ namespace ToDo.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ToDo.Entitys.Data", b =>
+                {
+                    b.HasOne("ToDo.IdentityEntity_s.ApplicationUser", "User")
+                        .WithMany("Data")
+                        .HasForeignKey("Userid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ToDo.IdentityEntity_s.ApplicationUser", b =>
+                {
+                    b.Navigation("Data");
                 });
 #pragma warning restore 612, 618
         }
