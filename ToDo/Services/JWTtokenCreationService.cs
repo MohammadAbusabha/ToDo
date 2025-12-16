@@ -55,16 +55,16 @@ namespace ToDo.Services
             // Permissions Claims //
 
             int maxValue = claims.Where(c=>c.Type == "Role").Select(c=>int.Parse(c.Value)).Max();
-            var test = new List<int>();
-            for(int i =  0; i <= maxValue; i++)
+            var privilegeList = new List<int>();
+            for(int privilegeValue = 0; privilegeValue <= maxValue; privilegeValue++)
             {
-                test.Add(i);
+                privilegeList.Add(privilegeValue);
             }
-            var privilegeClaims = _privilege.CreatePrivilege(test).Result;
+            var privilegeClaims = _privilege.CreatePrivilege(privilegeList).Result;
 
-            foreach(var t in privilegeClaims)
+            foreach(var privilege in privilegeClaims)
             {
-                claims.Add(t);
+                claims.Add(privilege);
             }
 
             // Token //

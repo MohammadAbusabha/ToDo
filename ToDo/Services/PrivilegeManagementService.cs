@@ -32,6 +32,8 @@ namespace ToDo.Services
             }
             return claims;
         }
+        //dont delete just yet (might use later) for perms
+
         //public async Task AddPrivilege(ApplicationUser appuser)
         //{
         //    var currentUserRoles = _userManager.GetRolesAsync(appuser).Result;

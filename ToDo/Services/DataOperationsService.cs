@@ -22,7 +22,10 @@ namespace ToDo.Services
     {
         private readonly DataContext _dataContext;
         private readonly ICurrentUserService _currentUser;
-        public DataOperationsService(DataContext todocontext, ICurrentUserService currentUserService)
+        public DataOperationsService(DataContext todocontext, ICurrentUserService currentUserService) 
+            // Services still broken , still need a way to feed user id that can be bypassed by the admin
+            // it does not make sense that each time i need to create a api to feed it id manually and such 
+            // it should contain logic code only
         {
             _dataContext = todocontext;
             _currentUser = currentUserService;
@@ -36,7 +39,9 @@ namespace ToDo.Services
         }
 
         // CREATE //
-        public async Task CreateData(CreateDataResource createData)  // takes current user id when creating data / need to change so that admin can choose whos id to use when creating data
+        public async Task CreateData(CreateDataResource createData)  
+            // takes current user id when creating data
+            // need to change so that admin can choose whos id to use when creating data
         {
             var data = createData.Adapt<Data>();
             data.UserId = _currentUser.CurrentUserId();

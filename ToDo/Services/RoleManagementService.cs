@@ -35,7 +35,9 @@ namespace ToDo.Services
             var resault = _roleManager.RoleExistsAsync(rolename).Result;
             if (!resault)
             {
-                //var role = rolename.Adapt<ApplicationRole>(); // mapster breaks since rolename is a string 
+                //var role = rolename.Adapt<ApplicationRole>(); 
+                // mapster breaks since rolename is a string 
+                //still dont know if this is best practice here or not
                 ApplicationRole role = new()
                 {
                     Name = rolename,

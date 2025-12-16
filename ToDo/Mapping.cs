@@ -9,11 +9,13 @@ namespace ToDo
 {
     public class Mapping
     {
-        private readonly ICurrentUserService _user;
-        public Mapping(ICurrentUserService currentUserService)
-        {
-            _user = currentUserService;
-        }
+        //propeply useless
+
+        //private readonly ICurrentUserService _user;
+        //public Mapping(ICurrentUserService currentUserService)
+        //{
+        //    _user = currentUserService;
+        //}
         public static void ApplyMapping()
         {
             TypeAdapterConfig.GlobalSettings.Default.Settings.PreserveReference = true;

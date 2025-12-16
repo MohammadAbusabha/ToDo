@@ -67,11 +67,12 @@ builder.Services.AddAuthentication(o =>
 
 //Authorization
 
+// this is useless now / change to role auth since we have privilege inside roles vvvvvvvvvvvvvvvv
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("Delete", policy => policy.RequireClaim("Permission", "Delete"));
-    o.AddPolicy("Write", policy => policy.RequireClaim("Permission", "Delet", "Write"));
-    o.AddPolicy("Read", policy => policy.RequireClaim("Permission", "Delet", "Write", "Read"));
+    o.AddPolicy("Delete", policy => policy.RequireClaim("Privilege", "Delete"));
+    o.AddPolicy("Write", policy => policy.RequireClaim("Privilege", "Delet", "Write"));     
+    o.AddPolicy("Read", policy => policy.RequireClaim("Privilege", "Delet", "Write", "Read"));
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

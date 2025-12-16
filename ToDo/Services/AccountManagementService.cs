@@ -37,7 +37,9 @@ namespace ToDo.Services
             {
                 await _signInManager.SignInAsync(user, isPersistent: false, authenticationMethod: null);
 
-                var role = registerResource.Adapt<RoleValue>();// what if someone deleted the user role / this becomes invalid (??)
+                var role = registerResource.Adapt<RoleValue>();
+                // what if someone deleted the user role / this becomes invalid (??)
+                //check on this
 
                 await _userType.RoleAssign(role);
                 return _jWTtokenService.CreateJWTtoken(user);
@@ -54,7 +56,6 @@ namespace ToDo.Services
             if (resault)
             {
                 return _jWTtokenService.CreateJWTtoken(user);
-                // perm create/give
             }
             throw new Exception("Username or Password is Incorrect!!");
         }

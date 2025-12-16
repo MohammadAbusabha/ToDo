@@ -12,7 +12,7 @@ namespace ToDo.Controllers
     public class PermissionManagementController : ControllerBase
     {
         private readonly IPrivilegeManagementService _permissionManagementService;
-        public PermissionManagementController(IPrivilegeManagementService permissionManagementService)
+        public PermissionManagementController(IPrivilegeManagementService permissionManagementService)// Controller useless for now
         {
             _permissionManagementService = permissionManagementService;
         }
