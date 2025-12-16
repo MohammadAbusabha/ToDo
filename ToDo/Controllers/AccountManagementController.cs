@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ToDo.Interfaces;
 using ToDo.Resources;
+using ToDo.Resources.Filters;
 
 namespace ToDo.Controllers
 {
@@ -22,16 +23,16 @@ namespace ToDo.Controllers
 
         [AllowAnonymous]
         [HttpPost("CreateAccount")]
-        public async Task<string> CreateUser(RegisterResource dtoUsers)
+        public async Task<string> CreateUser(RegisterResource user)
         {
-            return await _ilogin.CreateUser(dtoUsers);
+            return await _ilogin.CreateUser(user);
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<string> Login(LoginResource dtoUsers)
+        public async Task<string> Login(LoginResource user)
         {
-            return await _ilogin.Login(dtoUsers);
+            return await _ilogin.Login(user);
         }
         [AllowAnonymous]
         [HttpPost("Logout")]
@@ -41,9 +42,9 @@ namespace ToDo.Controllers
         }
 
         [HttpPut("Role Selection")]
-        public Task<string> RoleAssign(RoleResource roleDTO)
+        public Task<string> RoleAssign(RoleValue role)
         {
-            return _type.RoleAssign(roleDTO);
+            return _type.RoleAssign(role);
         }
 
     }

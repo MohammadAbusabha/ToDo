@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using ToDo.IdentityEntity_s;
+using ToDo.Entities;
+using ToDo.Enums;
 using ToDo.Interfaces;
 
 namespace ToDo.Services
@@ -14,38 +17,59 @@ namespace ToDo.Services
     public class JWTtokenCreationService : IJWTtokenCreationService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public JWTtokenCreationService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
+        private readonly ICurrentUserService _user;
+        private readonly IPrivilegeManagementService _privilege;
+        public JWTtokenCreationService
+            (IConfiguration configuration, ICurrentUserService currentUser, IPrivilegeManagementService privilegeManagementService)
         {
             _configuration = configuration;
-            _userManager = userManager;
+            _user = currentUser;
+            _privilege = privilegeManagementService;
         }
 
         public string CreateJWTtoken(ApplicationUser user)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-            var signCred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expire = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["expiration_minutes"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"])); // Security key //
+            var signCred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); // Credentials //
+            var expire = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["expiration_minutes"])); // Token lifetime // 
+
+            // user claims //
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
             };
-            var roles = _userManager.GetRolesAsync(user).Result;
+
+            // Role Claim //
+
+            var roles = _user.CurrentUserRoles(user).Result;
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                int value = (int)Enum.Parse<Role>(role);
+                claims.Add(new Claim("Role", value.ToString()));
+                //claims.Add(new Claim(ClaimTypes.Role, role));
             }
-            var permissionClaim = _userManager.GetClaimsAsync(user).Result;
-            claims.AddRange(permissionClaim);
+
+            // Permissions Claims //
+
+            int maxValue = claims.Where(c=>c.Type == "Role").Select(c=>int.Parse(c.Value)).Max();
+            var test = new List<int>();
+            for(int i =  0; i <= maxValue; i++)
+            {
+                test.Add(i);
+            }
+            var privilegeClaims = _privilege.CreatePrivilege(test).Result;
+
+            foreach(var t in privilegeClaims)
+            {
+                claims.Add(t);
+            }
+
+            // Token //
 
             var token = new JwtSecurityToken(issuer: "http://localhost:5298", audience: "MyApi", claims, expires: expire, signingCredentials: signCred);
-
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

@@ -11,16 +11,16 @@ namespace ToDo.Controllers
     [ApiController]
     public class PermissionManagementController : ControllerBase
     {
-        private readonly IPermissionManagementService _permissionManagementService;
-        public PermissionManagementController(IPermissionManagementService permissionManagementService)
+        private readonly IPrivilegeManagementService _permissionManagementService;
+        public PermissionManagementController(IPrivilegeManagementService permissionManagementService)
         {
             _permissionManagementService = permissionManagementService;
         }
 
         [HttpPost]
-        public async Task AddPermissions(PermissionResource permissionResource)
+        public async Task AddPermissions(PrivilegeResource privilegeResource)
         {
-            await _permissionManagementService.Addpermission(permissionResource);
+            //await _permissionManagementService.Addpermission(permissionResource);
         }
     }
 }

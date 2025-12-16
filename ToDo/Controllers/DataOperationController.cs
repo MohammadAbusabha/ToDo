@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ToDo.Entitys;
+using ToDo.Entities;
 using ToDo.Interfaces;
 using ToDo.Resources;
+using ToDo.Resources.Filters;
 
 namespace ToDo.Controllers
 {
@@ -30,7 +31,7 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "Write")]
         [HttpPost("Create data")]
-        public async Task CreateData(DataResource datadto)
+        public async Task CreateData(CreateDataResource datadto)
         {
             await _IdataOperationService.CreateData(datadto);
         }
@@ -38,7 +39,7 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "Write")]
         [HttpPut("Update data")]
-        public async Task UpdateData(UpdateDataResource updateDataResource)
+        public async Task UpdateData(DataResource updateDataResource)
         {
             await _IdataOperationService.UpdateData(updateDataResource);
         }
@@ -62,9 +63,9 @@ namespace ToDo.Controllers
 
         [Authorize(policy: "Read")]
         [HttpPost("Search Data")]
-        public async Task<List<DataResource>> SearchData(MatchanyResource searchDTO)
+        public async Task<List<DataResource>> SearchData(DataFilter filter)
         {
-            return await _IdataOperationService.SearchData(searchDTO);
+            return await _IdataOperationService.SearchData(filter);
         }
     }
 }

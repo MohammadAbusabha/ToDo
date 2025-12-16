@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Context;
 
@@ -11,9 +12,11 @@ using ToDo.Context;
 namespace ToDo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251215075330_TEST")]
+    partial class TEST
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,6 +134,9 @@ namespace ToDo.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -143,10 +149,9 @@ namespace ToDo.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -246,45 +251,6 @@ namespace ToDo.Migrations
                     b.ToTable("DataTable");
                 });
 
-            modelBuilder.Entity("ToDo.Entities.Permissions", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissions");
-                });
-
-            modelBuilder.Entity("ToDo.Entities.RolePermissions", b =>
-                {
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("ApplicationRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("permissionsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId", "PermissionId");
-
-                    b.HasIndex("ApplicationRoleId");
-
-                    b.HasIndex("permissionsId");
-
-                    b.ToTable("RolePermissions");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("ToDo.Entities.ApplicationRole", null)
@@ -336,45 +302,29 @@ namespace ToDo.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ToDo.Entities.Data", b =>
-                {
-                    b.HasOne("ToDo.Entities.ApplicationUser", "User")
-                        .WithMany("Data")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ToDo.Entities.RolePermissions", b =>
-                {
-                    b.HasOne("ToDo.Entities.ApplicationRole", "ApplicationRole")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("ApplicationRoleId");
-
-                    b.HasOne("ToDo.Entities.Permissions", "permissions")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("permissionsId");
-
-                    b.Navigation("ApplicationRole");
-
-                    b.Navigation("permissions");
-                });
-
             modelBuilder.Entity("ToDo.Entities.ApplicationRole", b =>
                 {
-                    b.Navigation("RolePermissions");
+                    b.HasOne("ToDo.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("ToDo.Entities.Data", b =>
+                {
+                    b.HasOne("ToDo.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("Datas")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("ToDo.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Data");
-                });
-
-            modelBuilder.Entity("ToDo.Entities.Permissions", b =>
-                {
-                    b.Navigation("RolePermissions");
+                    b.Navigation("Datas");
                 });
 #pragma warning restore 612, 618
         }

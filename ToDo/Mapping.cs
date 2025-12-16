@@ -1,16 +1,22 @@
 ﻿using AutoMapper;
 using Mapster;
-using ToDo.Entitys;
-using ToDo.IdentityEntity_s;
+using ToDo.Entities;
+using ToDo.Interfaces;
 using ToDo.Resources;
+using ToDo.Resources.Filters;
 
 namespace ToDo
 {
     public class Mapping
     {
+        private readonly ICurrentUserService _user;
+        public Mapping(ICurrentUserService currentUserService)
+        {
+            _user = currentUserService;
+        }
         public static void ApplyMapping()
         {
-            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true).IgnoreNullValues(true);
+            TypeAdapterConfig.GlobalSettings.Default.Settings.PreserveReference = true;
 
             ApplyModelToResourceMapping();
             ApplyResourceToModelMapping();
@@ -18,16 +24,11 @@ namespace ToDo
         public static void ApplyResourceToModelMapping()
         {
             TypeAdapterConfig.GlobalSettings.ForType<DataResource, Data>()
-                .Map(dest => dest.Description, src => src.Description).Map(dest => dest.Name, src => src.Name);
+                .Ignore(dest => dest.UserId);
         }
         public static void ApplyModelToResourceMapping()
         {
-            TypeAdapterConfig.GlobalSettings.ForType<Data, DataResource>().Map(dest => dest.Description, src => src.Description).Map(dest => dest.Name, src => src.Name);
+            TypeAdapterConfig.GlobalSettings.ForType<Data, DataResource>();
         }
-        //public static void ApplyResourceToUserModelMapping()
-        //{
-        //    TypeAdapterConfig.GlobalSettings.ForType<DataResource, ApplicationUser>()
-        //        .Map(dest => dest.Data, src => src.Description).Map(dest => dest.Data, src => src.Name).Map(dest=>dest.Id, src=>src.);
-        //}
     }
 }

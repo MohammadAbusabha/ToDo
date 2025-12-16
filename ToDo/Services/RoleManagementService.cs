@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 using ToDo.Enums;
-using ToDo.IdentityEntity_s;
+using ToDo.Entities;
 using ToDo.Interfaces;
 using ToDo.Resources;
+using ToDo.Resources.Filters;
+using Mapster;
 
 namespace ToDo.Services
 {
@@ -20,31 +22,34 @@ namespace ToDo.Services
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        public async Task CreateRole(string rolename)
+        public async Task<string> CreateRole(int value)
         {
-            var resault = await _roleManager.RoleExistsAsync(rolename);
+            // checks if role is valid
+            string rolename = Enum.GetName(typeof(Role), value);
+            if (rolename == null)
+            {
+                throw new Exception("Role is not valid!");
+            }
 
+            // creates the role if it does not exist
+            var resault = _roleManager.RoleExistsAsync(rolename).Result;
             if (!resault)
             {
-                ApplicationRole role = new ApplicationRole();
-                var enumRoleNames = typeof(Role).GetEnumNames();
-                foreach (var enumRoleName in enumRoleNames)
+                //var role = rolename.Adapt<ApplicationRole>(); // mapster breaks since rolename is a string 
+                ApplicationRole role = new()
                 {
-                    if (enumRoleName == rolename)
-                    {
-                        role.Name = enumRoleName;
-                        await _roleManager.CreateAsync(role);
-                        return;
-                    }
-                }
-                throw new Exception("Incorrect Role");
+                    Name = rolename,
+                    Value = value
+                };
+                await _roleManager.CreateAsync(role);
             }
+            return rolename;
         }
-        public async Task<string> RoleAssign(RoleResource roleDTO)
+        public async Task<string> RoleAssign(RoleValue filter)
         {
-            await CreateRole(roleDTO.RoleName);
-            var user = _userManager.FindByNameAsync(roleDTO.UserName).Result;
-            await _userManager.AddToRoleAsync(user, roleDTO.RoleName);
+            var role = await CreateRole(filter.Value);
+            var user = _userManager.FindByNameAsync(filter.UserName).Result;
+            await _userManager.AddToRoleAsync(user, role);
             return "Role granted";
         }
     }

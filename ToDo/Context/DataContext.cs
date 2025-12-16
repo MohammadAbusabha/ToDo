@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
-using ToDo.Entitys;
-using ToDo.IdentityEntity_s;
+using ToDo.Entities;
+using ToDo.Enums;
 
 namespace ToDo.Context
 {
@@ -13,11 +13,12 @@ namespace ToDo.Context
         {
         }
         public DbSet<Data> DataTable { get; set; }
-
+        public DbSet<Privilege> Privilege { get; set; }
+        public DbSet<RolePrivilege> RolePrivilege { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<ApplicationUser>().HasMany(a=>a.Data).WithOne(a=>a.User).HasForeignKey(a=>a.Userid);
+            builder.Entity<RolePrivilege>().HasKey(sc => new { sc.RoleId, sc.PrivilegeId });
         }
     }
 }

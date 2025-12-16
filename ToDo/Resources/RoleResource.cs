@@ -1,11 +1,15 @@
 ﻿namespace ToDo.Resources
 {
-    public class RoleResource : UserRoleResource
+    public class RoleResource : RoleUser
     {
         public string RoleName { get; set; }
     }
-    public class UserRoleResource
+    public class RoleUser
     {
         public string UserName { get; set; }
+    }
+    public class RoleValue : RoleUser
+    {
+        public int Value { get; set; } = 1;
     }
 }

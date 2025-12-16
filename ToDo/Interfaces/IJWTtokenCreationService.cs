@@ -1,4 +1,4 @@
-﻿using ToDo.IdentityEntity_s;
+﻿using ToDo.Entities;
 
 namespace ToDo.Interfaces
 {

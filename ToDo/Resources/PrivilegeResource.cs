@@ -1,8 +1,8 @@
 ﻿namespace ToDo.Resources
 {
-    public class PermissionResource
+    public class PrivilegeResource
     {
         public string Username { get; set; }
-        public string Permission { get; set; }
+        public string Privilege { get; set; }
     }
 }

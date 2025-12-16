@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ToDo.IdentityEntity_s;
+using ToDo.Entities;
+using ToDo.Enums;
 using ToDo.Interfaces;
 using ToDo.Resources;
+using ToDo.Resources.Filters;
 
 namespace ToDo.Services
 {
@@ -25,28 +28,19 @@ namespace ToDo.Services
         }
 
         // USER CREATION //
-        public async Task<string> CreateUser(RegisterResource dtoUsers)
+        public async Task<string> CreateUser(RegisterResource registerResource)
         {
-            ApplicationUser user = new ApplicationUser()
-            {
-                UserName = dtoUsers.Username,
-                Email = dtoUsers.EmailAddress,
-            };
-            var resault = await _userManager.CreateAsync(user, dtoUsers.Password);
+            var user = registerResource.Adapt<ApplicationUser>();
+            var resault = await _userManager.CreateAsync(user, registerResource.Password);
 
             if (resault.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false, authenticationMethod: null);
 
-                RoleResource roleDTO = new RoleResource()
-                {
-                    UserName = dtoUsers.Username,
-                    RoleName = "Viewer"
-                };
-                await _userType.RoleAssign(roleDTO);
+                var role = registerResource.Adapt<RoleValue>();// what if someone deleted the user role / this becomes invalid (??)
 
-                var token = _jWTtokenService.CreateJWTtoken(user);
-                return token;
+                await _userType.RoleAssign(role);
+                return _jWTtokenService.CreateJWTtoken(user);
             }
             throw new Exception(string.Join(" / ", resault.Errors.Select(e => e.Description)));
         }
@@ -55,12 +49,12 @@ namespace ToDo.Services
 
         public async Task<string> Login(LoginResource dtoUsers)
         {
-            var user = await _userManager.FindByNameAsync(dtoUsers.Username);
+            var user = await _userManager.FindByNameAsync(dtoUsers.UserName);
             var resault = await _userManager.CheckPasswordAsync(user, dtoUsers.Password);
             if (resault)
             {
-                var token = _jWTtokenService.CreateJWTtoken(user);
-                return token;
+                return _jWTtokenService.CreateJWTtoken(user);
+                // perm create/give
             }
             throw new Exception("Username or Password is Incorrect!!");
         }

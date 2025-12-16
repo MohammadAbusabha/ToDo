@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +11,8 @@ using System;
 using System.Text;
 using ToDo;
 using ToDo.Context;
+using ToDo.Entities;
 using ToDo.Handlers;
-using ToDo.IdentityEntity_s;
 using ToDo.Interfaces;
 using ToDo.Services;
 
@@ -23,19 +22,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 
+//
+
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+    .AddEntityFrameworkStores<DataContext>();
+
+//Registry
+
 builder.Services.AddScoped<IDataOperationService, DataOperationsService>();//data api
 builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();//account api
 builder.Services.AddTransient<IJWTtokenCreationService, JWTtokenCreationService>();//jwt
 builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();//roles
-builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();//permissions
+builder.Services.AddScoped<IPrivilegeManagementService, PrivilegeManagementService>();//permissions
 builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();//admin role bypass
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();//CurrentUser info
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<DataContext>()
-    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, DataContext, Guid>>()
-    .AddRoleStore<RoleStore<ApplicationRole, DataContext, Guid>>();
+//database connection
 
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
+
+//JWT / Authentication
 
 builder.Services.AddAuthentication(o =>
 {
@@ -59,13 +65,14 @@ builder.Services.AddAuthentication(o =>
     o.MapInboundClaims = false;
 });
 
+//Authorization
+
 builder.Services.AddAuthorization(o =>
 {
     o.AddPolicy("Delete", policy => policy.RequireClaim("Permission", "Delete"));
     o.AddPolicy("Write", policy => policy.RequireClaim("Permission", "Delet", "Write"));
     o.AddPolicy("Read", policy => policy.RequireClaim("Permission", "Delet", "Write", "Read"));
 });
-
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -75,6 +82,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//Mapster
 
 Mapping.ApplyMapping();
 

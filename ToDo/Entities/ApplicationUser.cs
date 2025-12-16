@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using ToDo.Entitys;
+using System.ComponentModel.DataAnnotations;
 
-namespace ToDo.IdentityEntity_s
+namespace ToDo.Entities
 {
     public class ApplicationUser : IdentityUser<Guid>
     {
-        public ICollection<Data> Data { get; set; }
+        public List<Data> Data { get; set; }
     }
 }
