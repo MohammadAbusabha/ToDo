@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using ToDo.Infrastructure.Resources;
+using ToDo.Core.Resources;
 
 namespace ToDo.Infrastructure.Interfaces
 {

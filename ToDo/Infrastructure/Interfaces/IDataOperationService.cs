@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ToDo.Infrastructure.Resources;
-using ToDo.Infrastructure.Resources.Filters;
+using ToDo.Core.Entities;
+using ToDo.Core.Resources;
+using ToDo.Core.Resources.Filters;
 
 namespace ToDo.Infrastructure.Interfaces
 {
     public interface IDataOperationService
     {
-        public Task<DataResource> GetData(int id);
+        public Task<Data> GetData(int id);
         public Task CreateData(CreateDataResource datadto);
         public Task UpdateData(DataResource updateDataResource);
         public Task DeleteData(int id);

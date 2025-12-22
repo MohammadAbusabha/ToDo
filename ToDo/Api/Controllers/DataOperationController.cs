@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ToDo.Core.Entities;
+using ToDo.Core.Resources;
+using ToDo.Core.Resources.Filters;
 using ToDo.Infrastructure.Interfaces;
-using ToDo.Infrastructure.Resources;
-using ToDo.Infrastructure.Resources.Filters;
 
 namespace ToDo.Api.Controllers
 {
@@ -22,7 +23,7 @@ namespace ToDo.Api.Controllers
 
         [Authorize(policy: "Read")]
         [HttpGet("Get data")]
-        public async Task<DataResource> GetData(int id)
+        public async Task<Data> GetData(int id)
         {
             return await _IdataOperationService.GetData(id);
         }

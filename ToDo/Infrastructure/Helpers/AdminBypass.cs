@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ToDo.Infrastructure.Helpers
 {
-    public class AdminBypass : AuthorizationHandler<IAuthorizationRequirement>
+    public class AdminBypass : AuthorizationHandler<IAuthorizationRequirement> // Propeply going to change
     {
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IAuthorizationRequirement requirement)

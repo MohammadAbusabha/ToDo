@@ -7,13 +7,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 using ToDo.Core.Entities;
-using ToDo.Core.Services;
+using ToDo.Core.Resources;
 using ToDo.Infrastructure;
 using ToDo.Infrastructure.Context;
 using ToDo.Infrastructure.Helpers;
 using ToDo.Infrastructure.Interfaces;
+using ToDo.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,12 +37,20 @@ builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();/
 builder.Services.AddScoped<IPrivilegeManagementService, PrivilegeManagementService>();//permissions
 builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();//admin role bypass
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();//CurrentUser info
+builder.Services.AddScoped(typeof(IDataRepository<>), typeof(DataRepository<>));//Repo
 
 //database connection
 
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
 
 //JWT / Authentication
+
+builder.Services.Configure<JwtSettingsResource>(
+    builder.Configuration.GetSection("JWT"));
+
+var test = builder.Configuration["JWT:SecretKey"];
+if (string.IsNullOrEmpty(test))
+    throw new Exception("JWT SECRET KEY IS NULL HERE");
 
 builder.Services.AddAuthentication(o =>
 {

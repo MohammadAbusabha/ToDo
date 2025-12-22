@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ToDo.Core.Resources;
 using ToDo.Infrastructure.Interfaces;
-using ToDo.Infrastructure.Resources;
 
 namespace ToDo.Api.Controllers
 {

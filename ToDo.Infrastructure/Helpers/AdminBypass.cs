@@ -1,0 +1,17 @@
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace ToDo.Infrastructure.Helpers
+{
+    public class AdminBypass : AuthorizationHandler<IAuthorizationRequirement> // Propeply going to change
+    {
+
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IAuthorizationRequirement requirement)
+        {
+            if (context.User.IsInRole("Admin") | context.User.HasClaim("Permission", "Owner"))
+            {
+                context.Succeed(requirement);
+            }
+            return Task.CompletedTask;
+        }
+    }
+}

@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="ToDo/ToDo.csproj" />
+  <Project Path="ToDo.Api/ToDo.Api.csproj" Id="dca2c3e9-4305-4b65-adae-b0576a57f12c" />
+  <Project Path="ToDo.Core/ToDo.Core.csproj" Id="b77ee56d-c8b4-489e-a6ae-1079140051e0" />
+  <Project Path="ToDo.Infrastructure/ToDo.Infrastructure.csproj" Id="3f6d79cd-a61b-44a1-afe0-fa7ead589d2b" />
 </Solution>
