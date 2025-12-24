@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ToDo.Core.Entities;
-using ToDo.Core.Resources;
 using ToDo.Infrastructure.Context;
-using ToDo.Infrastructure.Interfaces;
+using ToDo.Core.Interfaces;
 
 namespace ToDo.Infrastructure.Services
 {

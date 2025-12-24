@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ToDo.Api.Authorization;
 using ToDo.Core.Entities;
+using ToDo.Core.Enums;
+using ToDo.Core.Evaluator;
+using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
 using ToDo.Infrastructure;
 using ToDo.Infrastructure.BaseSpecifications;
 using ToDo.Infrastructure.Context;
-using ToDo.Infrastructure.Helpers;
-using ToDo.Infrastructure.Interfaces;
+using ToDo.Infrastructure.Resolver;
 using ToDo.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,15 +30,19 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 
 //Registry
 
-builder.Services.AddScoped<IDataOperationService, DataOperationsService>();//data api
-builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();//account api
-builder.Services.AddTransient<IJWTtokenCreationService, JWTtokenCreationService>();//jwt
-builder.Services.AddTransient<IRoleManagementService, RoleManagementService>();//roles
-builder.Services.AddScoped<IPrivilegeManagementService, PrivilegeManagementService>();//permissions
-builder.Services.AddSingleton<IAuthorizationHandler, AdminBypass>();//admin role bypass
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();//CurrentUser info
+builder.Services.AddScoped<IDataService, DataService>();//data 
+builder.Services.AddScoped<IAccountService, AccountService>();//account 
+builder.Services.AddTransient<IJWTService, JWTService>();//jwt
+builder.Services.AddTransient<IRoleService, RoleService>();//roles
+builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//permissions
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();//CurrentUser 
+
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));//Repo
 builder.Services.AddScoped(typeof(IBaseSpecification<>), typeof(BaseSpecifications<>));//Spec
+//builder.Services.AddScoped<IAuthorizationRequirement, PrivilegeRequirement>();//PrivilegeRequirement
+//builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//PrivilegeEvaluator
+//builder.Services.AddScoped<IRoleLevelResolver, RoleLevelResolver>();//RoleLevelResolver
 
 //database connection
 
@@ -71,14 +79,14 @@ builder.Services.AddAuthentication(o =>
     o.MapInboundClaims = false;
 });
 
-//Authorization
+//Authorization //Policy
 
-// this is useless now / change to role auth since we have privilege inside roles vvvvvvvvvvvvvvvv
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("Delete", policy => policy.RequireClaim("Privilege", "Delete"));
-    o.AddPolicy("Write", policy => policy.RequireClaim("Privilege", "Delet", "Write"));
-    o.AddPolicy("Read", policy => policy.RequireClaim("Privilege", "Delet", "Write", "Read"));
+    o.AddPolicy("Owner", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Owner)));
+    o.AddPolicy("CanDelete", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Delete)));
+    o.AddPolicy("CanWrite", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Write)));
+    o.AddPolicy("CanRead", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Read)));
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -110,5 +118,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Role Seeding 
+
+using (var scope = app.Services.CreateScope())
+{
+    var rolemanager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    foreach (var roleName in Enum.GetNames(typeof(RoleLevel)))
+    {
+        if (!await rolemanager.RoleExistsAsync(roleName))
+        {
+            await rolemanager.CreateAsync(new ApplicationRole() { Name = roleName, Value = (int)Enum.Parse<RoleLevel>(roleName) });
+        }
+    }
+}
 
 app.Run();

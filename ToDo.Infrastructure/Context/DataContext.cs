@@ -10,12 +10,9 @@ namespace ToDo.Infrastructure.Context
         {
         }
         public DbSet<Data> DataTable { get; set; }
-        public DbSet<Privilege> Privilege { get; set; }
-        public DbSet<RolePrivilege> RolePrivilege { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<RolePrivilege>().HasKey(sc => new { sc.RoleId, sc.PrivilegeId });
         }
     }
 }

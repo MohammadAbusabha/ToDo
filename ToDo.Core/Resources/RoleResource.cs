@@ -8,8 +8,4 @@
     {
         public string UserName { get; set; }
     }
-    public class RoleValue : RoleUser
-    {
-        public int Value { get; set; } = 1;
-    }
 }

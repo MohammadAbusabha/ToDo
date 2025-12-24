@@ -1,61 +1,78 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using ToDo.Core.Entities;
-using ToDo.Infrastructure.Interfaces;
+using ToDo.Core.Enums;
+using ToDo.Core.Interfaces;
 
 namespace ToDo.Infrastructure.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
         private readonly ClaimsPrincipal _user;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
             _user = httpContextAccessor.HttpContext.User;
         }
-        public Guid Id
+        public Guid UserId
         {
             get
             {
-
+                if(_user != null)
+                {
+                    if (Guid.TryParse(_user.FindFirstValue(ClaimTypes.NameIdentifier), out Guid result))
+                    {
+                        return result;
+                    }
+                }
+                return Guid.Empty;
             }
         }
         public string Name
         {
             get
             {
-                return _user.FindFirstValue(ClaimTypes.Name);
+                if (_user != null)
+                {
+                    var name = _user.FindFirstValue(ClaimTypes.Name);
+                    if (name !=null)
+                    {
+                        return name;
+                    }
+                }
+                return string.Empty;
             }
         }
         public string Email
         {
             get
             {
-                return _user.FindFirstValue(ClaimTypes.Email);
-            }
-        }
-        public List<string> Roles // should not get roles from claims here
-        {
-            get
-            {
-                var currRoles =_userManager
-                    .GetRolesAsync(_userManager.FindByIdAsync(Id.ToString()).Result)
-                    .Result;
-                List<string> roles = new List<string>();
-                foreach (var role in currRoles)
+                if (_user != null)
                 {
-                    roles.Add(role.ToString());
+                    var email = _user.FindFirstValue(ClaimTypes.Email);
+                    if (email != null)
+                    {
+                        return email;
+                    }
                 }
-                return roles;
+                return string.Empty;
             }
         }
-        public int TopRole
+        public List<string> RoleNames
         {
             get
             {
-                return 0;
+                if (_user != null)
+                {
+                    var claimRoles = _user.FindAll(ClaimsIdentity.DefaultRoleClaimType);
+                    var rolenames = new List<string>();
+                    foreach (var role in claimRoles)
+                    {
+                        rolenames.Add(role.Value);
+                    }
+                    return rolenames;
+                }
+                return new List<string>();
             }
         }
     }

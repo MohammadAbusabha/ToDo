@@ -1,7 +1,4 @@
-﻿using ToDo.Core.Entities;
-using ToDo.Core.Resources;
-
-namespace ToDo.Infrastructure.Interfaces
+﻿namespace ToDo.Core.Interfaces
 {
     public interface IRepository<T> where T : class // one repo for full app
     {

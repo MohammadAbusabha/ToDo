@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ToDo.Infrastructure.Interfaces
+namespace ToDo.Core.Interfaces
 {
     public interface IBaseSpecification<T> where T : class
     {

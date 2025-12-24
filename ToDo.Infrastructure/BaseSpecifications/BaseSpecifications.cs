@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using ToDo.Infrastructure.Interfaces;
+using ToDo.Core.Interfaces;
 
 namespace ToDo.Infrastructure.BaseSpecifications
 {

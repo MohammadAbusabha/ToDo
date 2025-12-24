@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Infrastructure.Context;
 
@@ -11,9 +12,11 @@ using ToDo.Infrastructure.Context;
 namespace ToDo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251223114659_TEST3")]
+    partial class TEST3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,6 +251,46 @@ namespace ToDo.Migrations
                     b.ToTable("DataTable");
                 });
 
+            modelBuilder.Entity("ToDo.Core.Entities.Privilege", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Privilege");
+                });
+
+            modelBuilder.Entity("ToDo.Core.Entities.RolePrivilege", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PrivilegeId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ApplicationRoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RoleId", "PrivilegeId");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasIndex("PrivilegeId");
+
+                    b.ToTable("RolePrivilege");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("ToDo.Core.Entities.ApplicationRole", null)
@@ -310,9 +353,38 @@ namespace ToDo.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ToDo.Core.Entities.RolePrivilege", b =>
+                {
+                    b.HasOne("ToDo.Core.Entities.ApplicationRole", "ApplicationRole")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("ApplicationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ToDo.Core.Entities.Privilege", "privilege")
+                        .WithMany("RolePrivilege")
+                        .HasForeignKey("PrivilegeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationRole");
+
+                    b.Navigation("privilege");
+                });
+
+            modelBuilder.Entity("ToDo.Core.Entities.ApplicationRole", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("ToDo.Core.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Data");
+                });
+
+            modelBuilder.Entity("ToDo.Core.Entities.Privilege", b =>
+                {
+                    b.Navigation("RolePrivilege");
                 });
 #pragma warning restore 612, 618
         }

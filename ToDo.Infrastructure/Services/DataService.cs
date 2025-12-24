@@ -6,17 +6,17 @@ using ToDo.Core.Entities;
 using ToDo.Core.Resources;
 using ToDo.Core.Resources.Filters;
 using ToDo.Infrastructure.Context;
-using ToDo.Infrastructure.Interfaces;
+using ToDo.Core.Interfaces;
 
 namespace ToDo.Infrastructure.Services
 {
-    public class DataOperationsService : IDataOperationService
+    public class DataService : IDataService
     {
         private readonly DataContext _dataContext;
         private readonly ICurrentUserService _currentUser;
         private readonly IRepository<Data> _repo;
         private readonly IBaseSpecification<Data> _spec;
-        public DataOperationsService(DataContext todocontext, ICurrentUserService currentUserService, IRepository<Data> repo, IBaseSpecification<Data> spec)
+        public DataService(DataContext todocontext, ICurrentUserService currentUserService, IRepository<Data> repo, IBaseSpecification<Data> spec)
         // Services still broken , still need a way to feed user id that can be bypassed by the admin
         // it does not make sense that each time i need to create a api to feed it id manually and such 
         // it should contain logic code only
@@ -51,7 +51,7 @@ namespace ToDo.Infrastructure.Services
         // need to change so that admin can choose whos id to use when creating data
         {
             var data = createData.Adapt<Data>();
-            data.UserId = _currentUser.Id;
+            data.UserId = _currentUser.UserId;
             await _dataContext.DataTable.AddAsync(data);
             await _dataContext.SaveChangesAsync();
         }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
-using ToDo.Infrastructure.Interfaces;
 
 namespace ToDo.Api.Controllers
 {
@@ -10,10 +10,10 @@ namespace ToDo.Api.Controllers
     [ApiController]
     public class AccountManagementController : ControllerBase
     {
-        private readonly IAccountManagementService _ilogin;
-        private readonly IRoleManagementService _type;
+        private readonly IAccountService _ilogin;
+        private readonly IRoleService _type;
 
-        public AccountManagementController(IAccountManagementService ilogin, IRoleManagementService type)
+        public AccountManagementController(IAccountService ilogin, IRoleService type)
         {
             _ilogin = ilogin;
             _type = type;
@@ -40,9 +40,9 @@ namespace ToDo.Api.Controllers
         }
 
         [HttpPut("Role Selection")]
-        public Task<string> RoleAssign(RoleValue role)
+        public Task<string> RoleAssign(RoleResource roleResource)
         {
-            return _type.RoleAssign(role);
+            return _type.RoleAssignAsync(roleResource);
         }
 
     }

@@ -1,8 +1,8 @@
 ﻿using ToDo.Core.Entities;
 
-namespace ToDo.Infrastructure.Interfaces
+namespace ToDo.Core.Interfaces
 {
-    public interface IJWTtokenCreationService
+    public interface IJWTService
     {
         string CreateJWTtoken(ApplicationUser user);
     }

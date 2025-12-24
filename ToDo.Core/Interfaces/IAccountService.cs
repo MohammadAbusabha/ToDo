@@ -1,8 +1,8 @@
 ﻿using ToDo.Core.Resources;
 
-namespace ToDo.Infrastructure.Interfaces
+namespace ToDo.Core.Interfaces
 {
-    public interface IAccountManagementService
+    public interface IAccountService
     {
         public Task<string> CreateUser(RegisterResource dtoUsers);
         public Task<string> Login(LoginResource dtoUsers);

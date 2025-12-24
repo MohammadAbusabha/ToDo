@@ -2,9 +2,9 @@
 using ToDo.Core.Resources;
 using ToDo.Core.Resources.Filters;
 
-namespace ToDo.Infrastructure.Interfaces
+namespace ToDo.Core.Interfaces
 {
-    public interface IDataOperationService
+    public interface IDataService
     {
         public Task<Data> GetData(int id);
         public Task CreateData(CreateDataResource datadto);

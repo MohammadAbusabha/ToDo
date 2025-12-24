@@ -4,8 +4,8 @@
     {
         None = 0, Read = 1, Write = 2, Delete = 3, Owner = 4
     }
-    public enum Role
+    public enum RoleLevel
     {
-        Viewer = 1, Guest = 2, User = 3, Admin = 4
+        None = 0, Viewer = 1, Guest = 2, User = 3, Admin = 4
     }
 }
