@@ -1,9 +1,0 @@
-﻿using ToDo.Core.Resources;
-
-namespace ToDo.Core.Resources.Filters
-{
-    public class DataFilter : CreateDataResource
-    {
-        public bool MatchAny { get; set; }
-    }
-}
