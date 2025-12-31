@@ -2,41 +2,36 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Core.Entities;
-using ToDo.Core.Enums;
 using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
 
-namespace ToDo.Infrastructure.Services
+namespace ToDo.Core.Services
 {
     public class AccountService : IAccountService
     {
 
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJWTService _jWTtokenService;
-        private readonly IRoleService _role;
-        public AccountService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTService jWTtokenService, IRoleService role, RoleManager<ApplicationRole> roleManager)
+        public AccountService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IJWTService jWTtokenService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _jWTtokenService = jWTtokenService;
-            _role = role;
-            _roleManager = roleManager;
         }
 
         // USER CREATION //
-        public async Task<string> CreateUser(RegisterResource registerResource) // should be good
+        public async Task<string> CreateUser(RegisterResource registerResource) 
         {
             var user = registerResource.Adapt<ApplicationUser>();
             var result = await _userManager.CreateAsync(user, registerResource.Password);
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, RoleLevel.Viewer.ToString());
+                await _userManager.AddToRoleAsync(user, "Guest");
                 return "User Created";
             }
-            throw new Exception(string.Join(" / ", result.Errors.Select(e => e.Description)));// exception handling should be done else where 
+            throw new Exception(string.Join(" / ", result.Errors.Select(e => e.Description)));
         }
 
         // USER LOGIN //
@@ -49,7 +44,7 @@ namespace ToDo.Infrastructure.Services
             {
                 return _jWTtokenService.CreateJWTtoken(user);
             }
-            throw new Exception("Username or Password is Incorrect!!");// exception handling should be done else where
+            throw new Exception("Username or Password is Incorrect!!");
         }
 
         // USER LOGOUT // 

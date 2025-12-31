@@ -4,6 +4,6 @@ namespace ToDo.Core.Entities
 {
     public class ApplicationRole : IdentityRole<Guid>
     {
-        public int Value { get; set; }
+        public List<PrivilegeRole> PrivilegeRoles { get; set; }
     }
 }

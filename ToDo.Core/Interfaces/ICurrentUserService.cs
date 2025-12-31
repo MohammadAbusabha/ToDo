@@ -1,6 +1,4 @@
-﻿using ToDo.Core.Enums;
-
-namespace ToDo.Core.Interfaces
+﻿namespace ToDo.Core.Interfaces
 {
     public interface ICurrentUserService
     {

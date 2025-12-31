@@ -4,7 +4,7 @@ using ToDo.Core.Entities;
 using ToDo.Core.Resources;
 using ToDo.Core.Interfaces;
 
-namespace ToDo.Infrastructure.Services
+namespace ToDo.Core.Services
 {
     [AllowAnonymous]
     public class RoleService : IRoleService // mostly wrong need to go over

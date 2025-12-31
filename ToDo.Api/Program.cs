@@ -1,21 +1,20 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using ToDo.Api.Authorization;
 using ToDo.Core.Entities;
-using ToDo.Core.Enums;
-using ToDo.Core.Evaluator;
 using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
+using ToDo.Core.SpecTest;
 using ToDo.Infrastructure;
-using ToDo.Infrastructure.BaseSpecifications;
 using ToDo.Infrastructure.Context;
-using ToDo.Infrastructure.Resolver;
-using ToDo.Infrastructure.Services;
+using ToDo.Core.Services;
+using ToDo.Infrastructure.ServiceTest;
+using ToDo.Core.Mapping;
+using Microsoft.Data.SqlClient;
+using ToDo.Infrastructure.SpecTest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,19 +29,26 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 
 //Registry
 
-builder.Services.AddScoped<IDataService, DataService>();//data 
+//builder.Services.AddScoped<IDataService, DataService>();//data 
 builder.Services.AddScoped<IAccountService, AccountService>();//account 
 builder.Services.AddTransient<IJWTService, JWTService>();//jwt
 builder.Services.AddTransient<IRoleService, RoleService>();//roles
-builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//permissions
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();//CurrentUser 
+//builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//
+builder.Services.AddTransient<ICurrentUserService, CurrentUserService>();//CurrentUser 
+builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));//Repo
+builder.Services.AddTransient(typeof(ISpecification<>), typeof(Specifications<>));//Spec
+builder.Services.AddScoped<Seeder>();//seeder
 
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));//Repo
-builder.Services.AddScoped(typeof(IBaseSpecification<>), typeof(BaseSpecifications<>));//Spec
-//builder.Services.AddScoped<IAuthorizationRequirement, PrivilegeRequirement>();//PrivilegeRequirement
-//builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//PrivilegeEvaluator
-//builder.Services.AddScoped<IRoleLevelResolver, RoleLevelResolver>();//RoleLevelResolver
+builder.Services.AddScoped<IPrivilegeRoleLink, PrivilegeToRoleLink>();
+
+
+/////////////////////////////////////////////////////////////////////////////// TEST ///////////////////////////////////////////////////////////////
+//builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+//builder.Services.AddTransient<IDataRepo, DataRepo>();
+/////////////////////////////////////////////////////////////////////////////// TEST ///////////////////////////////////////////////////////////////
+
+
 
 //database connection
 
@@ -81,13 +87,13 @@ builder.Services.AddAuthentication(o =>
 
 //Authorization //Policy
 
-builder.Services.AddAuthorization(o =>
-{
-    o.AddPolicy("Owner", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Owner)));
-    o.AddPolicy("CanDelete", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Delete)));
-    o.AddPolicy("CanWrite", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Write)));
-    o.AddPolicy("CanRead", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Read)));
-});
+//builder.Services.AddAuthorization(o =>
+//{
+//    o.AddPolicy("Owner", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Owner)));
+//    o.AddPolicy("CanDelete", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Delete)));
+//    o.AddPolicy("CanWrite", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Write)));
+//    o.AddPolicy("CanRead", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Read)));
+//});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -121,17 +127,25 @@ app.MapControllers();
 
 // Role Seeding 
 
+//slight issue, if a role got deleted from enum it will still be in db
+//possible fix, update roles
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var rolemanager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+//    foreach (var roleName in Enum.GetNames(typeof(RoleLevel)))
+//    {
+//        if (!await rolemanager.RoleExistsAsync(roleName))
+//        {
+//            await rolemanager.CreateAsync(new ApplicationRole() { Name = roleName, Value = (int)Enum.Parse<RoleLevel>(roleName) });
+//        }
+//    }
+//}
 using (var scope = app.Services.CreateScope())
 {
-    var rolemanager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-    foreach (var roleName in Enum.GetNames(typeof(RoleLevel)))
-    {
-        if (!await rolemanager.RoleExistsAsync(roleName))
-        {
-            await rolemanager.CreateAsync(new ApplicationRole() { Name = roleName, Value = (int)Enum.Parse<RoleLevel>(roleName) });
-        }
-    }
+    var service = scope.ServiceProvider;
+    var seeder = service.GetRequiredService<Seeder>();
+    await seeder.SeedAsync();
 }
-
 app.Run();

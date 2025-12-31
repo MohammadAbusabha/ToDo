@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using ToDo.Core.Entities;
-using ToDo.Core.Enums;
 using ToDo.Core.Interfaces;
 
-namespace ToDo.Infrastructure.Services
+namespace ToDo.Core.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
@@ -14,6 +12,8 @@ namespace ToDo.Infrastructure.Services
         {
             _user = httpContextAccessor.HttpContext.User;
         }
+        // create obj of appuser
+        // return user.name for example
         public Guid UserId
         {
             get

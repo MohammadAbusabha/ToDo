@@ -10,9 +10,12 @@ namespace ToDo.Infrastructure.Context
         {
         }
         public DbSet<Data> DataTable { get; set; }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+        public DbSet<Privilege> PrivilegeTable { get; set; }
+        public DbSet<PrivilegeRole> PrivilegeRoles { get; set; }
+        //public DbSet<Permissions> PermissionsTable { get; set; }
+        //protected override void OnModelCreating(ModelBuilder builder)
+        //{
+        //    base.OnModelCreating(builder);
+        //}
     }
 }

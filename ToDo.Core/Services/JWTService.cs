@@ -6,11 +6,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToDo.Core.Entities;
-using ToDo.Core.Enums;
 using ToDo.Core.Resources;
 using ToDo.Core.Interfaces;
 
-namespace ToDo.Infrastructure.Services
+namespace ToDo.Core.Services
 {
     public class JWTService : IJWTService
     {
