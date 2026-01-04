@@ -14,7 +14,6 @@ using ToDo.Core.Services;
 using ToDo.Infrastructure.ServiceTest;
 using ToDo.Core.Mapping;
 using Microsoft.Data.SqlClient;
-using ToDo.Infrastructure.SpecTest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +28,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 
 //Registry
 
-//builder.Services.AddScoped<IDataService, DataService>();//data 
+builder.Services.AddScoped<IDataService, DataService>();//data 
 builder.Services.AddScoped<IAccountService, AccountService>();//account 
 builder.Services.AddTransient<IJWTService, JWTService>();//jwt
 builder.Services.AddTransient<IRoleService, RoleService>();//roles

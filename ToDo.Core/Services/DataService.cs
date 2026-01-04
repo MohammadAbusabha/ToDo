@@ -10,6 +10,7 @@ using ToDo.Core.SpecTest;
 using System.Collections;
 using System.Threading.Tasks;
 using ToDo.Core.Aggregate;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace ToDo.Core.Services
 {
@@ -41,7 +42,7 @@ namespace ToDo.Core.Services
         //}
 
         // GET //
-        public async Task<IEnumerable<Data>> GetData(int id)
+        public async Task<List<Data>> GetDataAsync(int id)
         {
             //var user = await _userManager.FindByIdAsync(_user.UserId.ToString());
             //var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
@@ -49,7 +50,10 @@ namespace ToDo.Core.Services
 
 
             var spec = new Specifications<Data>(x => x.Id == id);
-            var data = _repo.GetById(spec);
+            spec.AddInclude(x => x.User);
+
+
+            var data = await _repo.GetByIdAsync(spec);
             return data;
 
             //var dataId = new GetDataById(id);

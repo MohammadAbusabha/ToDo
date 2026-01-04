@@ -18,7 +18,7 @@ namespace ToDo.Infrastructure
         }
         public async Task SeedAsync()
         {
-            await _userManager.CreateAsync(new ApplicationUser() { UserName = "Admin"}, password:"Abc123!");
+            await _userManager.CreateAsync(new ApplicationUser() { UserName = "Admin", Email = "Admin@email.com"}, password:"Abc123!");
 
             var roles = new List<string>()
             {

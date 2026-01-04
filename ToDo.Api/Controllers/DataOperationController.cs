@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
 
@@ -15,15 +16,15 @@ namespace ToDo.Api.Controllers
             _IdataOperationService = iTodo;
         }
 
-        [Authorize]
+        //[Authorize (Roles =")]
         [HttpGet("{id}")]
-        public IActionResult GetData(int id)
+        public async Task<IActionResult> GetData(int id)
         {
-            var data = _IdataOperationService.GetData(id);
+            var data = await _IdataOperationService.GetDataAsync(id);
             return Ok(data);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task CreateData(CreateDataResource datadto)
         {

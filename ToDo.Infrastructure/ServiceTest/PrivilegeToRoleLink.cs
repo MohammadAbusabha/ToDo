@@ -2,9 +2,8 @@
 using ToDo.Core.Entities;
 using ToDo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Infrastructure.ServiceTest;
 
-namespace ToDo.Infrastructure.SpecTest
+namespace ToDo.Infrastructure.ServiceTest
 {
     public class PrivilegeToRoleLink : IPrivilegeRoleLink
     {
@@ -17,6 +16,13 @@ namespace ToDo.Infrastructure.SpecTest
         }
         public async Task CreateLinkAsync(string role, List<string> privileges)// works but needs optimization 
         {
+            // no longer seed roles
+            // admin creates roles (fully custom), privilege are seeded, we just check on privilege
+            // update roles (if admin wants to change privilege's for a certain role)
+            // feed privilege id into bridge, it should automatically get the role id
+
+
+
             if (await _roleManager.RoleExistsAsync(role))
             {
                 var roleId = await _roleManager.GetRoleIdAsync(await _roleManager.FindByNameAsync(role));

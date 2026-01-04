@@ -12,9 +12,22 @@ namespace ToDo.Infrastructure.ServiceTest
         {
             _context = context;
         }
-        public IEnumerable<T> GetById(ISpecification<T> specification = null)
+        public async Task<List<T>> GetByIdAsync(ISpecification<T> specification = null)
         {
-            return _context.Set<T>().Where(specification.Criteria);
+            //return _context.Set<T>().Where(specification.Criteria);
+            IQueryable<T> query = _context.Set<T>();
+
+            if (specification != null)
+            {
+                query = query.Where(specification.Criteria);
+            }
+
+            foreach (var include in specification.Include)
+            {
+                query.Include(include);
+            }
+
+            return await query.ToListAsync();
         }
         public async Task AddAsync(T entity)
         {

@@ -6,7 +6,7 @@ namespace ToDo.Core.Interfaces
 {
     public interface IDataService
     {
-        public Task<IEnumerable<Data>> GetData(int id);
+        public Task<List<Data>> GetDataAsync(int id);
         public Task CreateDataAsync(CreateDataResource createData);
         //public Task<Data> GetData(int id);
         //public Task CreateData(CreateDataResource datadto);

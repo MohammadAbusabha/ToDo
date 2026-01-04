@@ -8,8 +8,8 @@ namespace ToDo.Core.SpecTest
         {
             Criteria = criteria;
         }
-        public Expression<Func<T, bool>> Criteria { get; set; }
-        public List<Expression<Func<T, object>>> Include { get; set; }
+        public Expression<Func<T, bool>> Criteria { get; }
+        public List<Expression<Func<T, object>>> Include { get; } = new List<Expression<Func<T, object>>>();
         public void AddInclude(Expression<Func<T, object>> expression)
         {
             Include.Add(expression);
