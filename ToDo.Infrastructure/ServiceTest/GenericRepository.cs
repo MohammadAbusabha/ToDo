@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
+using ToDo.Core.Entities;
+using ToDo.Core.Interfaces;
 using ToDo.Core.SpecTest;
 using ToDo.Infrastructure.Context;
-using ToDo.Core.Interfaces;
 
 namespace ToDo.Infrastructure.ServiceTest
 {
@@ -12,27 +15,33 @@ namespace ToDo.Infrastructure.ServiceTest
         {
             _context = context;
         }
-        public async Task<List<T>> GetByIdAsync(ISpecification<T> specification = null)
+        public async Task<List<T>> GetAllAsync(ISpecification<T> specification)
         {
-            //return _context.Set<T>().Where(specification.Criteria);
-            IQueryable<T> query = _context.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.Where(specification.Criteria);
-            }
-
-            foreach (var include in specification.Include)
-            {
-                query.Include(include);
-            }
-
-            return await query.ToListAsync();
+            return await _context.Set<T>().Where(specification.Criteria).ToListAsync();
         }
         public async Task AddAsync(T entity)
         {
-            await _context.AddAsync(entity);
-            _context.SaveChanges();
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
+        public async Task<T> GetAsync(ISpecification<T> specification)
+        {
+            return await _context.Set<T>().FirstAsync(specification.Criteria);
+        }
+        public async Task<bool> ExistAsync(ISpecification<T> specification)
+        {
+            return await _context.Set<T>().AnyAsync(specification.Criteria);
+        }
+        public async Task UpdateAsync(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+        
     }
 }

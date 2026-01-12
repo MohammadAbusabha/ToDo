@@ -35,11 +35,10 @@ builder.Services.AddTransient<IRoleService, RoleService>();//roles
 //builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//
 builder.Services.AddTransient<ICurrentUserService, CurrentUserService>();//CurrentUser 
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));//Repo
-builder.Services.AddTransient(typeof(ISpecification<>), typeof(Specifications<>));//Spec
+builder.Services.AddScoped(typeof(ISpecification<>), typeof(Specifications<>));//Spec
 builder.Services.AddScoped<Seeder>();//seeder
 
 
-builder.Services.AddScoped<IPrivilegeRoleLink, PrivilegeToRoleLink>();
 
 
 /////////////////////////////////////////////////////////////////////////////// TEST ///////////////////////////////////////////////////////////////

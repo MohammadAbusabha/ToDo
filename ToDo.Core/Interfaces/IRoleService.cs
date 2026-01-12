@@ -4,6 +4,7 @@ namespace ToDo.Core.Interfaces
 {
     public interface IRoleService
     {
-        public Task<string> RoleAssignAsync(RoleResource roleResource);
+        public Task CreateRoleWithPrivilegeAsync(RolePrivilegeResource rolePrivilegeResource);
+        public Task AddToRoleAsync(RoleResource roleResource);
     }
 }

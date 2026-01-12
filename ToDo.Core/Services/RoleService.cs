@@ -3,50 +3,87 @@ using Microsoft.AspNetCore.Identity;
 using ToDo.Core.Entities;
 using ToDo.Core.Resources;
 using ToDo.Core.Interfaces;
+using ToDo.Core.SpecTest;
+using System.Linq.Expressions;
 
 namespace ToDo.Core.Services
 {
     [AllowAnonymous]
-    public class RoleService : IRoleService // mostly wrong need to go over
+    public class RoleService : IRoleService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public RoleService(UserManager<ApplicationUser> userManager)
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IGenericRepository<PrivilegeRole> _rolePrivilegeRepo;
+        private readonly IGenericRepository<Privilege> _privilegeRepo;
+        private readonly ISpecification<Privilege> _privilegSpec;
+        private readonly ISpecification<PrivilegeRole> _privilegRoleSpec;
+        public RoleService(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
+            IGenericRepository<PrivilegeRole> rolePrivilegeRepo,
+            IGenericRepository<Privilege> privilegeRepo,
+            ISpecification<Privilege> specification,
+            ISpecification<PrivilegeRole> privilegeroleSpec)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
+            _rolePrivilegeRepo = rolePrivilegeRepo;
+            _privilegeRepo = privilegeRepo;
+            _privilegSpec = specification;
+            _privilegRoleSpec = privilegeroleSpec;
         }
-        //public async Task<string> CreateRoleAsync(int value)
-        //{
-        //    // checks if role is valid
-        //    string rolename = Enum.GetName(typeof(RoleLevel), value);
-        //    if (rolename == null)
-        //    {
-        //        throw new Exception("Role is not valid!");
-        //    }
 
-        //    // creates the role if it does not exist
-        //    var resault = _roleManager.RoleExistsAsync(rolename).Result;
-        //    if (!resault)
-        //    {
-        //        //var role = rolename.Adapt<ApplicationRole>(); 
-        //        // mapster breaks since rolename is a string 
-        //        //still dont know if this is best practice here or not
-        //        ApplicationRole role = new()
-        //        {
-        //            Name = rolename,
-        //            Value = value
-        //        };
-        //        await _roleManager.CreateAsync(role);
-        //    }
-        //    return rolename;
-        //}
-        public async Task<string> RoleAssignAsync(RoleResource roleResource)
+        public async Task CreateRoleWithPrivilegeAsync(RolePrivilegeResource rolePrivilegeResource)
         {
-            //var role = await CreateRoleAsync(filter.Value);
-            var user = _userManager.FindByNameAsync(roleResource.UserName).Result;
-            //var userId = _user.Id.ToString();
-            //var user = _userManager.FindByIdAsync(userId).Result;
-            await _userManager.AddToRoleAsync(user, roleResource.RoleName);
-            return "Role granted";
+            // Get Role ID //
+            string roleId;
+
+            if (!await _roleManager.RoleExistsAsync(rolePrivilegeResource.RoleName))
+            {
+                var role = new ApplicationRole() { Name = rolePrivilegeResource.RoleName };
+                await _roleManager.CreateAsync(role);
+                roleId = await _roleManager.GetRoleIdAsync(role);
+            }
+            else
+            {
+                var role = await _roleManager.FindByNameAsync(rolePrivilegeResource.RoleName);
+                roleId = await _roleManager.GetRoleIdAsync(role);
+            }
+
+            // Get Privilege ID'S //
+            List<Guid> privilegeIDS = new List<Guid>();
+            foreach (var privilegeName in rolePrivilegeResource.Privilege)
+            {
+                var privilege = await _privilegeRepo.GetAsync(_privilegSpec.AddCriteria(x => x.Name == privilegeName));
+                privilegeIDS.Add(privilege.Id);
+            }
+
+            // Save Role With Privilege's //
+            foreach (var privilegeID in privilegeIDS)
+            {
+                var privilegeRole = new PrivilegeRole()
+                {
+                    RolesId = Guid.Parse(roleId),
+                    PrivilegesId = privilegeID,
+                };
+                if (await _rolePrivilegeRepo.ExistAsync(_privilegRoleSpec.AddCriteria(x => x.RolesId == privilegeRole.RolesId && x.PrivilegesId == privilegeRole.PrivilegesId)))
+                {
+                    throw new Exception("Exist");
+                }
+                await _rolePrivilegeRepo.AddAsync(privilegeRole);
+            }
+        }
+        public async Task AddToRoleAsync(RoleResource roleResource)
+        {
+            var role = await _roleManager.FindByNameAsync(roleResource.RoleName);
+            var user = await _userManager.FindByNameAsync(roleResource.UserName);
+
+            if (role != null && user != null)
+            {
+                await _userManager.AddToRoleAsync(user, role.Name);
+                return;
+            }
+            throw new Exception("Role or User dont exist");
         }
     }
 }

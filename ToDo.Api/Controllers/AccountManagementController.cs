@@ -11,12 +11,12 @@ namespace ToDo.Api.Controllers
     public class AccountManagementController : ControllerBase
     {
         private readonly IAccountService _ilogin;
-        private readonly IRoleService _type;
+        private readonly IRoleService _role;
 
         public AccountManagementController(IAccountService ilogin, IRoleService type)
         {
             _ilogin = ilogin;
-            _type = type;
+            _role = type;
         }
 
         [AllowAnonymous]
@@ -39,10 +39,15 @@ namespace ToDo.Api.Controllers
             await _ilogin.Logout();
         }
 
-        [HttpPut("Role Selection")]
-        public Task<string> RoleAssign(RoleResource roleResource)
+        [HttpPut("Create Role")]
+        public async Task CreateRole(RolePrivilegeResource rolePrivilegeResource)
         {
-            return _type.RoleAssignAsync(roleResource);
+            await _role.CreateRoleWithPrivilegeAsync(rolePrivilegeResource);   
+        }
+        [HttpPut("Grant Role")]
+        public async Task AddToRole(RoleResource roleResource)
+        {
+            await _role.AddToRoleAsync(roleResource);
         }
 
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ToDo.Core.Entities
+﻿namespace ToDo.Core.Entities
 {
     public class Privilege
     {

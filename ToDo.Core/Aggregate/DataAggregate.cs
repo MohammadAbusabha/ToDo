@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ToDo.Core.Aggregate
 {
-    public class DataAggregate
+    public class DataAggregate // TESTING
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
