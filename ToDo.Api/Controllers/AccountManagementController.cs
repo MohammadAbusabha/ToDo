@@ -42,7 +42,7 @@ namespace ToDo.Api.Controllers
         [HttpPut("Create Role")]
         public async Task CreateRole(RolePrivilegeResource rolePrivilegeResource)
         {
-            await _role.CreateRoleWithPrivilegeAsync(rolePrivilegeResource);   
+            await _role.CreateRoleWithPrivilegeAsync(rolePrivilegeResource);
         }
         [HttpPut("Grant Role")]
         public async Task AddToRole(RoleResource roleResource)

@@ -1,22 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToDo.Core.Entities;
-using ToDo.Core.Resources;
 using ToDo.Core.Interfaces;
+using ToDo.Core.Resources;
 
 namespace ToDo.Core.Services
 {
     public class JWTService : IJWTService
     {
         private readonly JwtSettingsResource _jwtSettings;
-        public JWTService(IOptions<JwtSettingsResource> jwtSettings)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public JWTService(IOptions<JwtSettingsResource> jwtSettings,
+            UserManager<ApplicationUser> userManager)
         {
             _jwtSettings = jwtSettings.Value;
+            _userManager = userManager;
         }
 
         public string CreateJWTtoken(ApplicationUser user)
@@ -33,6 +35,13 @@ namespace ToDo.Core.Services
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             };
+
+            // user roles //
+
+            foreach (var role in _userManager.GetRolesAsync(user).Result)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             // Token //
 

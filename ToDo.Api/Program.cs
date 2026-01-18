@@ -3,25 +3,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using ToDo.Core.Entities;
 using ToDo.Core.Interfaces;
+using ToDo.Core.Mapping;
 using ToDo.Core.Resources;
+using ToDo.Core.Services;
 using ToDo.Core.SpecTest;
 using ToDo.Infrastructure;
 using ToDo.Infrastructure.Context;
-using ToDo.Core.Services;
 using ToDo.Infrastructure.ServiceTest;
-using ToDo.Core.Mapping;
-using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-
-//
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<DataContext>();
@@ -32,21 +30,12 @@ builder.Services.AddScoped<IDataService, DataService>();//data
 builder.Services.AddScoped<IAccountService, AccountService>();//account 
 builder.Services.AddTransient<IJWTService, JWTService>();//jwt
 builder.Services.AddTransient<IRoleService, RoleService>();//roles
-//builder.Services.AddScoped<IPrivilegeEvaluator, PrivilegeEvaluator>();//
 builder.Services.AddTransient<ICurrentUserService, CurrentUserService>();//CurrentUser 
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));//Repo
 builder.Services.AddScoped(typeof(ISpecification<>), typeof(Specifications<>));//Spec
 builder.Services.AddScoped<Seeder>();//seeder
 
-
-
-
-/////////////////////////////////////////////////////////////////////////////// TEST ///////////////////////////////////////////////////////////////
-//builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-//builder.Services.AddTransient<IDataRepo, DataRepo>();
-/////////////////////////////////////////////////////////////////////////////// TEST ///////////////////////////////////////////////////////////////
-
-
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();// organization
 
 //database connection
 
@@ -57,8 +46,8 @@ builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(builder.Configura
 builder.Services.Configure<JwtSettingsResource>(
     builder.Configuration.GetSection("JWT"));
 
-var test = builder.Configuration["JWT:SecretKey"];
-if (string.IsNullOrEmpty(test))
+var key = builder.Configuration["JWT:SecretKey"];
+if (string.IsNullOrEmpty(key))
     throw new Exception("JWT SECRET KEY IS NULL HERE");
 
 builder.Services.AddAuthentication(o =>
@@ -85,13 +74,11 @@ builder.Services.AddAuthentication(o =>
 
 //Authorization //Policy
 
-//builder.Services.AddAuthorization(o =>
-//{
-//    o.AddPolicy("Owner", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Owner)));
-//    o.AddPolicy("CanDelete", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Delete)));
-//    o.AddPolicy("CanWrite", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Write)));
-//    o.AddPolicy("CanRead", policy => policy.Requirements.Add(new PrivilegeRequirement(Privileges.Read)));
-//});
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    o.AddPolicy("User", policy => policy.RequireClaim(ClaimTypes.Role, "User"));
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -123,27 +110,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Role Seeding 
+// Seeding
 
-//slight issue, if a role got deleted from enum it will still be in db
-//possible fix, update roles
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var rolemanager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-//    foreach (var roleName in Enum.GetNames(typeof(RoleLevel)))
-//    {
-//        if (!await rolemanager.RoleExistsAsync(roleName))
-//        {
-//            await rolemanager.CreateAsync(new ApplicationRole() { Name = roleName, Value = (int)Enum.Parse<RoleLevel>(roleName) });
-//        }
-//    }
-//}
 using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
     var seeder = service.GetRequiredService<Seeder>();
     await seeder.SeedAsync();
 }
+
 app.Run();

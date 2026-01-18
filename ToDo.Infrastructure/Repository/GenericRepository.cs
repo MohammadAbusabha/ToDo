@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
-using ToDo.Core.Entities;
 using ToDo.Core.Interfaces;
 using ToDo.Core.SpecTest;
 using ToDo.Infrastructure.Context;
@@ -15,7 +13,11 @@ namespace ToDo.Infrastructure.ServiceTest
         {
             _context = context;
         }
-        public async Task<List<T>> GetAllAsync(ISpecification<T> specification)
+        public async Task<List<T>> GetAllAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+        public async Task<List<T>> GetAllBySpecAsync(ISpecification<T> specification)
         {
             return await _context.Set<T>().Where(specification.Criteria).ToListAsync();
         }
@@ -32,16 +34,29 @@ namespace ToDo.Infrastructure.ServiceTest
         {
             return await _context.Set<T>().AnyAsync(specification.Criteria);
         }
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, ISpecification<T> specification)
         {
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            var trackedEntity =_context.Set<T>().SingleOrDefault(specification.Criteria);
+            if(trackedEntity != null)
+            {
+                _context.Entry(trackedEntity).CurrentValues.SetValues(entity);
+                await _context.SaveChangesAsync();
+            }
         }
         public async Task DeleteAsync(T entity)
         {
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
-        
+        public async Task SoftDeleteAsync(T entity, ISpecification<T> specification)
+        {
+            var trackedEntity = await _context.Set<T>().FirstOrDefaultAsync(specification.Criteria);
+            if (trackedEntity != null)
+            {
+                _context.Entry(trackedEntity).OriginalValues.SetValues(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

@@ -12,6 +12,9 @@ namespace ToDo.Infrastructure.Context
         public DbSet<Data> DataTable { get; set; }
         public DbSet<Privilege> PrivilegeTable { get; set; }
         public DbSet<PrivilegeRole> PrivilegeRoles { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Project> Projects  { get; set; }
+        public DbSet<Device> Devices { get; set; }
         //public DbSet<Permissions> PermissionsTable { get; set; }
         //protected override void OnModelCreating(ModelBuilder builder)
         //{

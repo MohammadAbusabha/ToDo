@@ -1,24 +1,29 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using ToDo.Core.Entities;
-using ToDo.Infrastructure.Context;
+using ToDo.Core.Interfaces;
+using ToDo.Core.SpecTest;
 
 namespace ToDo.Infrastructure
 {
     public class Seeder
     {
-        private readonly DataContext _context;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        public Seeder(DataContext context, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        private readonly ISpecification<Privilege> _privilegeSpec;
+        private readonly IGenericRepository<Privilege> _privilegRepo;
+        public Seeder(RoleManager<ApplicationRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            ISpecification<Privilege> specification,
+            IGenericRepository<Privilege> genericRepository)
         {
-            _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _privilegeSpec = specification;
+            _privilegRepo = genericRepository;
         }
         public async Task SeedAsync()
         {
-            await _userManager.CreateAsync(new ApplicationUser() { UserName = "Admin", Email = "Admin@email.com"}, password:"Abc123!");
+            await _userManager.CreateAsync(new ApplicationUser() { UserName = "Admin", Email = "Admin@email.com" }, password: "Abc123!");
 
             var roles = new List<string>()
             {
@@ -45,12 +50,16 @@ namespace ToDo.Infrastructure
             }
             foreach (var privilege in privileges)
             {
-                if (!await _context.PrivilegeTable.AnyAsync(x => x.Name == privilege))
+                if (!await _privilegRepo.ExistAsync(_privilegeSpec.AddCriteria(x => x.Name == privilege)))
                 {
-                    await _context.PrivilegeTable.AddAsync(new Privilege() { Name = privilege });
+                    await _privilegRepo.AddAsync(new Privilege() { Name = privilege });
                 }
+                //if (!await _context.PrivilegeTable.AnyAsync(x => x.Name == privilege))
+                //{
+                //    await _context.PrivilegeTable.AddAsync(new Privilege() { Name = privilege });
+                //}
             }
-            _context.SaveChanges();
+            //_context.SaveChanges();
         }
     }
 }

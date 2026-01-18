@@ -21,7 +21,7 @@ namespace ToDo.Core.Services
         }
 
         // USER CREATION //
-        public async Task<string> CreateUser(RegisterResource registerResource) 
+        public async Task<string> CreateUser(RegisterResource registerResource)
         {
             var user = registerResource.Adapt<ApplicationUser>();
             var result = await _userManager.CreateAsync(user, registerResource.Password);

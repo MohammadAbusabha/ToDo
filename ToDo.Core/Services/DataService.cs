@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Core.Entities;
+using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
 using ToDo.Core.Resources.Filters;
-using ToDo.Core.Interfaces;
 using ToDo.Core.SpecTest;
 
 namespace ToDo.Core.Services
@@ -28,7 +28,7 @@ namespace ToDo.Core.Services
         // GET //
         public async Task<List<DataResource>> GetAsync(int id)
         {
-            var data = await _dataRepo.GetAllAsync(_spec.AddCriteria(x => x.Id == id));
+            var data = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Id == id));
             return data.Adapt<List<DataResource>>();
         }
 
@@ -45,14 +45,15 @@ namespace ToDo.Core.Services
         // UPDATE // 
         public async Task UpdateAsync(DataResource updateDataResource)
         {
+            var spec = _spec.AddCriteria(x => x.Id == updateDataResource.Id);
             var data = updateDataResource.Adapt<Data>();
-            await _dataRepo.UpdateAsync(data);
+            await _dataRepo.UpdateAsync(data, spec);
         }
 
         // DELETE //
         public async Task DeleteAsync(int id)
         {
-            var entity = await _dataRepo.GetAsync(_spec.AddCriteria(x=>x.Id == id));
+            var entity = await _dataRepo.GetAsync(_spec.AddCriteria(x => x.Id == id));
             await _dataRepo.DeleteAsync(entity);
         }
 
@@ -74,10 +75,10 @@ namespace ToDo.Core.Services
         {
             if (filter.MatchAny)
             {
-                var data = await _dataRepo.GetAllAsync(_spec.AddCriteria(x => x.Name == filter.Name || x.Description == filter.Description));
+                var data = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Name == filter.Name || x.Description == filter.Description));
                 return data.Adapt<List<DataResource>>();
             }
-            var data1 = await _dataRepo.GetAllAsync(_spec.AddCriteria(x => x.Name == filter.Name && x.Description == filter.Description));
+            var data1 = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Name == filter.Name && x.Description == filter.Description));
             return data1.Adapt<List<DataResource>>();
         }
     }

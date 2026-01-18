@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ToDo.Core.Aggregate
+﻿namespace ToDo.Core.Aggregate
 {
     public class DataAggregate // TESTING
     {

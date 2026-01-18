@@ -18,7 +18,7 @@ namespace ToDo.Core.Services
         {
             get
             {
-                if(_user != null)
+                if (_user != null)
                 {
                     if (Guid.TryParse(_user.FindFirstValue(ClaimTypes.NameIdentifier), out Guid result))
                     {
@@ -35,7 +35,7 @@ namespace ToDo.Core.Services
                 if (_user != null)
                 {
                     var name = _user.FindFirstValue(ClaimTypes.Name);
-                    if (name !=null)
+                    if (name != null)
                     {
                         return name;
                     }

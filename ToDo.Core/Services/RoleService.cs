@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ToDo.Core.Entities;
-using ToDo.Core.Resources;
 using ToDo.Core.Interfaces;
+using ToDo.Core.Resources;
 using ToDo.Core.SpecTest;
-using System.Linq.Expressions;
 
 namespace ToDo.Core.Services
 {

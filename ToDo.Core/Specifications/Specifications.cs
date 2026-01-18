@@ -1,5 +1,4 @@
-﻿using AutoMapper.Execution;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace ToDo.Core.SpecTest
 {
@@ -16,9 +15,9 @@ namespace ToDo.Core.SpecTest
             Include.Add(expression);
             return this;
         }
-        public ISpecification<T> AddCriteria(Expression<Func<T, bool>> criteria)// always returns null
+        public ISpecification<T> AddCriteria(Expression<Func<T, bool>> criteria)
         {
-            return this;
+            return new Specifications<T>(criteria);
         }
     }
 }

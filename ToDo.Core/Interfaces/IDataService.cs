@@ -1,5 +1,4 @@
-﻿using ToDo.Core.Entities;
-using ToDo.Core.Resources;
+﻿using ToDo.Core.Resources;
 using ToDo.Core.Resources.Filters;
 
 namespace ToDo.Core.Interfaces

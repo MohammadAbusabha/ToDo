@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using ToDo.Core.Interfaces;
 using ToDo.Core.Resources;
 using ToDo.Core.Resources.Filters;
@@ -8,7 +7,7 @@ using ToDo.Core.Resources.Filters;
 namespace ToDo.Api.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles ="User,Admin")]
     [ApiController]
     public class DataOperationController : ControllerBase
     {
