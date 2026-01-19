@@ -10,9 +10,9 @@ namespace ToDo.Core.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime CreatedDate { get; set; }
-        public Guid OrganizationId { get; set; }
+        public int OrganizationId { get; set; }
         public Organization Organization { get; set; }
-        public Guid DeviceId { get; set; }
+        public int DeviceId { get; set; }
         public List<Device> Device{ get; set; }
     }
 }

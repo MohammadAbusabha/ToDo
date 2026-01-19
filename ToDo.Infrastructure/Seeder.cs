@@ -52,7 +52,7 @@ namespace ToDo.Infrastructure
             {
                 if (!await _privilegRepo.ExistAsync(_privilegeSpec.AddCriteria(x => x.Name == privilege)))
                 {
-                    await _privilegRepo.AddAsync(new Privilege() { Name = privilege });
+                    await _privilegRepo.CreateAsync(new Privilege() { Name = privilege });
                 }
                 //if (!await _context.PrivilegeTable.AnyAsync(x => x.Name == privilege))
                 //{

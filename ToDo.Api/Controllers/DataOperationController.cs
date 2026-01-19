@@ -17,9 +17,9 @@ namespace ToDo.Api.Controllers
             _IdataOperationService = iTodo;
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetData(int id)
+        public async Task<IActionResult> GetData(int id, PaginationResource pagination)
         {
-            var data = await _IdataOperationService.GetAsync(id);
+            var data = await _IdataOperationService.GetAsync(id, pagination);
             return Ok(data);
         }
         [Authorize()]
@@ -50,7 +50,7 @@ namespace ToDo.Api.Controllers
         [HttpPost("search")]
         public async Task<List<DataResource>> SearchData(DataFilter filter)
         {
-            return await _IdataOperationService.SearchAsync(filter);
+            return await _IdataOperationService.SearchAsync(filter, filter.pagination);
         }
     }
 }

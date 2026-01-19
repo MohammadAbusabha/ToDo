@@ -3,5 +3,6 @@
     public class DataFilter : CreateDataResource
     {
         public bool MatchAny { get; set; }
+        public PaginationResource pagination { get; set; }
     }
 }

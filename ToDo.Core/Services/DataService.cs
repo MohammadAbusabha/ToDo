@@ -26,9 +26,9 @@ namespace ToDo.Core.Services
         }
 
         // GET //
-        public async Task<List<DataResource>> GetAsync(int id)
+        public async Task<List<DataResource>> GetAsync(int id, PaginationResource pagination)
         {
-            var data = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Id == id));
+            var data = await _dataRepo.GetAllBySpecAsync(pagination, _spec.AddCriteria(x => x.Id == id));
             return data.Adapt<List<DataResource>>();
         }
 
@@ -39,22 +39,21 @@ namespace ToDo.Core.Services
         {
             var data = createData.Adapt<Data>();
             data.UserId = _user.UserId;
-            await _dataRepo.AddAsync(data);
+            await _dataRepo.CreateAsync(data);
         }
 
         // UPDATE // 
         public async Task UpdateAsync(DataResource updateDataResource)
         {
             var spec = _spec.AddCriteria(x => x.Id == updateDataResource.Id);
-            var data = updateDataResource.Adapt<Data>();
-            await _dataRepo.UpdateAsync(data, spec);
+            await _dataRepo.UpdateAsync(updateDataResource, spec);
         }
 
         // DELETE //
         public async Task DeleteAsync(int id)
         {
-            var entity = await _dataRepo.GetAsync(_spec.AddCriteria(x => x.Id == id));
-            await _dataRepo.DeleteAsync(entity);
+            var spec = _spec.AddCriteria(x => x.Id == id);
+            await _dataRepo.DeleteAsync(spec);
         }
 
         // LIST //
@@ -71,14 +70,14 @@ namespace ToDo.Core.Services
         }
 
         // SEARCH //
-        public async Task<List<DataResource>> SearchAsync(DataFilter filter)
+        public async Task<List<DataResource>> SearchAsync(DataFilter filter, PaginationResource pagination)
         {
             if (filter.MatchAny)
             {
-                var data = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Name == filter.Name || x.Description == filter.Description));
+                var data = await _dataRepo.GetAllBySpecAsync(pagination, _spec.AddCriteria(x => x.Name == filter.Name || x.Description == filter.Description));
                 return data.Adapt<List<DataResource>>();
             }
-            var data1 = await _dataRepo.GetAllBySpecAsync(_spec.AddCriteria(x => x.Name == filter.Name && x.Description == filter.Description));
+            var data1 = await _dataRepo.GetAllBySpecAsync(pagination ,_spec.AddCriteria(x => x.Name == filter.Name && x.Description == filter.Description));
             return data1.Adapt<List<DataResource>>();
         }
     }

@@ -10,33 +10,38 @@ namespace ToDo.Core.Services
     {
         private readonly ISpecification<Organization> _specification;
         private readonly IGenericRepository<Organization> _repo;
+        private readonly IOrganizationRepository _orgRepo;
         public OrganizationService(ISpecification<Organization> specification,
-            IGenericRepository<Organization> genericRepository)
+            IGenericRepository<Organization> genericRepository,
+            IOrganizationRepository organizationRepository)
         {
             _specification = specification;
             _repo = genericRepository;
+            _orgRepo = organizationRepository;
         }
-        public async Task<List<Organization>> GetAllAsync()
+        public async Task<List<OrganizationResource>> GetAllAsync(PaginationResource pagination)
         {
-            return await _repo.GetAllAsync();
+            var organizations = await _repo.GetAllBySpecAsync(pagination, _specification.AddCriteria(null));
+            return organizations.Adapt<List<OrganizationResource>>();
         }
-        public async Task<Organization> GetByIdAsync(int id)
+        public async Task<OrganizationResource> GetByIdAsync(int id)
         {
-            return await _repo.GetAsync(_specification.AddCriteria(x => x.Id == id));
+            var organization = await _repo.GetAsync(_specification.AddCriteria(x => x.Id == id));
+            return organization.Adapt<OrganizationResource>();
         }
         public async Task CreateAsync(OrganizationResource organizationResource)
         {
-            await _repo.AddAsync(organizationResource.Adapt<Organization>());
+            await _repo.CreateAsync(organizationResource.Adapt<Organization>());
         }
         public async Task UpdateAsync(UpdateOrgResource updateOrgResource)
         {
            var spec = _specification.AddCriteria(x => x.Id == updateOrgResource.Id);
-           await _repo.UpdateAsync(updateOrgResource.Adapt<Organization>(), spec);
+           await _repo.UpdateAsync(updateOrgResource, spec);
         }
-        public async Task DeleteByIdAsync(SoftDeleteResource softDelete) // wip
+        public async Task DeleteByIdAsync(SoftDeleteResource softDelete)
         {
             var spec = _specification.AddCriteria(x => x.Id == softDelete.Id);
-            await _repo.SoftDeleteAsync(softDelete.Adapt<Organization>(), spec);
+            await _orgRepo.SoftDeleteAsync(spec);
         }
     }
 }

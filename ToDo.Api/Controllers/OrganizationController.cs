@@ -21,21 +21,21 @@ namespace ToDo.Api.Controllers
             return Ok(await _organizationService.GetByIdAsync(id));
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery]PaginationResource pagination)
         {
-            return Ok(await _organizationService.GetAllAsync());
+            return Ok(await _organizationService.GetAllAsync(pagination));
         }
         [HttpPost]
         public async Task Create(OrganizationResource organizationResource)
         {
             await _organizationService.CreateAsync(organizationResource);
         }
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task Update(UpdateOrgResource updateOrgResource)
         {
             await _organizationService.UpdateAsync(updateOrgResource);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task DeleteAsync(SoftDeleteResource softDeleteResource)
         {
             await _organizationService.DeleteByIdAsync(softDeleteResource);

@@ -10,7 +10,7 @@ namespace ToDo.Core.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsDeleted { get; set; } = false;
-        public Guid ProjectId { get; set; }
+        public int ProjectId { get; set; }
         public List<Project> Project { get; set; }
     }
 }

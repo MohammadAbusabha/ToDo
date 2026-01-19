@@ -13,6 +13,7 @@ using ToDo.Core.Services;
 using ToDo.Core.SpecTest;
 using ToDo.Infrastructure;
 using ToDo.Infrastructure.Context;
+using ToDo.Infrastructure.Repository;
 using ToDo.Infrastructure.ServiceTest;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,10 @@ builder.Services.AddScoped(typeof(ISpecification<>), typeof(Specifications<>));/
 builder.Services.AddScoped<Seeder>();//seeder
 
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();// organization
+builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();// organization Repo
+
+builder.Services.AddScoped<IProjectService, ProjectService>();// Project
+builder.Services.AddScoped<IDeviceService, DeviceService>();// Device
 
 //database connection
 

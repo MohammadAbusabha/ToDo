@@ -69,7 +69,7 @@ namespace ToDo.Core.Services
                 {
                     throw new Exception("Exist");
                 }
-                await _rolePrivilegeRepo.AddAsync(privilegeRole);
+                await _rolePrivilegeRepo.CreateAsync(privilegeRole);
             }
         }
         public async Task AddToRoleAsync(RoleResource roleResource)
